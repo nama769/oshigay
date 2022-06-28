@@ -1,6 +1,7 @@
 package database;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -48,45 +49,21 @@ public class DatabaseTool {
         return true;
     }
 
-    public String[] findUser(String Username,String Password){
+    public UserModel findUser(String Username,String Password){
         try{
-            String result[];
-            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select ID from Users where Username=? and Password=?");
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select * from Users where Username=? and Password=?");
             preparedStatement.setString(1,Username);
             preparedStatement.setString(2,Password);
-            String result[0]=preparedStatement.execute();
-            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select Username from Users where Username=? and Password=?");
-            preparedStatement.setString(1,Username);
-            preparedStatement.setString(2,Password);
-            String result[1]=preparedStatement.execute();
-            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select Password from Users where Username=? and Password=?");
-            preparedStatement.setString(1,Username);
-            preparedStatement.setString(2,Password);
-            String result[2]=preparedStatement.execute();
-            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select IP from Users where Username=? and Password=?");
-            preparedStatement.setString(1,Username);
-            preparedStatement.setString(2,Password);
-            String result[3]=preparedStatement.execute();
-            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select Role from Users where Username=? and Password=?");
-            preparedStatement.setString(1,Username);
-            preparedStatement.setString(2,Password);
-            String result[4]=preparedStatement.execute();
-            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select MAC from Users where Username=? and Password=?");
-            preparedStatement.setString(1,Username);
-            preparedStatement.setString(2,Password);
-            String result[5]=preparedStatement.execute();
-            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select State from Users where Username=? and Password=?");
-            preparedStatement.setString(1,Username);
-            preparedStatement.setString(2,Password);
-            String result[6]=preparedStatement.execute();
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            while(resultSet.next()){
+                return new UserModel(resultSet.getString(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5),resultSet.getString(6),resultSet.getString(7));
+            }
         }catch (SQLException e){
             // if the error message is "out of memory",
             // it probably means no database file is found
             System.err.println(e.getMessage());
         }
-        return result[];
+        return null;
     }
-
-
-
 }
