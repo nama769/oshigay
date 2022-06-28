@@ -31,8 +31,8 @@ public class Protocol {
 	 */
 
 
-	public static int TYPE_RETURN_MESSAGE=5;
-
+	public static int TYPE_RETURN_MESSAGE=5;//消息回应
+    public static int TYPE_CHANGE=101;//频率更改
 	/**
 	 * 发送函数，
 	 * @param type 类型

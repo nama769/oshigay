@@ -82,28 +82,85 @@ public class HandleClient implements Runnable{
 				if(Server.curKey!=key) break;
 				ByteArrayInputStream bai=new ByteArrayInputStream(data);
 				BufferedImage buff=ImageIO.read(bai);
-				Server.view.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
-				Server.view.centerPanel.repaint();
+//				Server.view.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
+//				Server.view.centerPanel.repaint();
 				bai.close();
-
 				break;
 			case 2:
 				String msg=new String(data);
 				if(msg.equals("client")) {
 					key=socket.getInetAddress().getHostAddress();
 					Server.client.put(key, socket);
-					Server.view.setTreeNode(Server.view.addValue(key));
+//					Server.view.setTreeNode(Server.view.addValue(key));
 					if(Server.curKey==null) Server.curKey=key;
 				}
 				break;
 			case 3:
-				Server.view.setTreeNode(Server.view.removeValue(key));
+//				Server.view.setTreeNode(Server.view.removeValue(key));
 				Server.client.remove(key);
-				Server.view.centerPanel.setBufferedImage(null);
-				Server.view.centerPanel.repaint();
+//				Server.view.centerPanel.setBufferedImage(null);
+//				Server.view.centerPanel.repaint();
 				Server.curKey=null;
 				isLive=false;
 				break;
+				/**
+				 * 21-40
+				 * 21用户注册，data格式为:字段长度+字段值，顺序为Username,Passwd,MAC,Role
+				 */
+			case 21:
+				String message = new String(data);
+				/**
+				 * 获取Username
+				 */
+				int UsernameLen = Integer.parseInt(message.substring(0,1));
+				int UsernameEndIndex = 1 + UsernameLen;
+				String Username = message.substring(1,UsernameEndIndex);
+				int PasswordLen = Integer.parseInt(message.substring(UsernameEndIndex,UsernameEndIndex+1));
+				/**
+				 * 获取Password
+				 */
+				int PasswordBeginIndex = UsernameEndIndex + 1;
+				int PasswordEndIndex = PasswordBeginIndex + PasswordLen;
+				String Password = message.substring(PasswordBeginIndex,PasswordEndIndex);
+//				int IPLen = Integer.parseInt((message.substring(PasswordEndIndex,PasswordEndIndex+1)));
+//				int IPBeginIndex = PasswordEndIndex+1;
+//				int IPEndIndex = IPBeginIndex + IPLen;
+				key=socket.getInetAddress().getHostAddress();
+				/**
+				 * 获取MAC地址
+				 */
+				int MACLen = Integer.parseInt(message.substring(PasswordEndIndex,PasswordEndIndex+1));
+				int MACBeginIndex = PasswordEndIndex + 1;
+				int MACEndIndex = MACBeginIndex + MACLen;
+				String MAC = message.substring(MACBeginIndex,MACEndIndex);
+				/**
+				 * 获取Role信息
+				 */
+				int Role = Integer.parseInt(message.substring(MACEndIndex,MACEndIndex+1));
+				/**
+				 * UUID gen
+				 */
+				String uuid = UUID.randomUUID().toString().replace("-", "");
+				/**
+				 * userModel传入database模块
+				 */
+				UserModel userModel = new UserModel(uuid,Username,Password,key,Role,MAC,UserModel.STATE_NO_LOGIN);
+				boolean RegisterResult = databaseTool.addUser(userModel);
+				String ReturnMsg = "";
+				if(RegisterResult==true){
+					ReturnMsg = "Register Succeed";
+				}
+				else{
+					ReturnMsg = "Register Failed";
+				}
+				Protocol.send(type,ReturnMsg.getBytes(),dos);
+				break;
+            case 101:
+            	this.clientConfig=clientConfig;
+            	byte frequency=data[0];
+            	if(frequency!=clientConfig.getFrequency()){
+            		clientConfig.setFrequency(frequency);
+				}
 			default:
 				break;
 			}
@@ -117,6 +174,12 @@ public class HandleClient implements Runnable{
 			}
 		}
 	}
+
+
+	private void sendMessage(String message){
+		Protocol.send(Protocol.TYPE_RETURN_MESSAGE,message.getBytes(StandardCharsets.UTF_8),dos);
+	}
+
 	/**
 	 * 图片缩放
 	 * @param bfImage
