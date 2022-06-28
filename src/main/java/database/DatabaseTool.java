@@ -52,7 +52,7 @@ public class DatabaseTool {
         try{
             PreparedStatement preparedStatement = initDatabase.getpreparedStatement("insert into Images values(?,?,?)");
             preparedStatement.setString(1,image.getID());
-            preparedStatement.setString(2,image.getCreatTime());
+            preparedStatement.setLong(2,image.getCreatTime());
             preparedStatement.setString(3,image.getUserID());
             preparedStatement.execute();
         }catch (SQLException e){
@@ -62,7 +62,6 @@ public class DatabaseTool {
         }
         return true;
         }
-    }
 
     public UserModel findUser(String Username,String Password){
         try{
