@@ -20,6 +20,9 @@ public class Protocol {
 	public static int TYPE_LOAD=2;//登录
 	public static int TYPE_LOGOUT=3;//退出
 
+	public static int TYPE_GRAPH=61;//图片
+
+
 	/**
 	 * 老张 1-20
 	 * 老郭 21-40

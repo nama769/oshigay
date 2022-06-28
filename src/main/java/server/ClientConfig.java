@@ -5,12 +5,14 @@ public class ClientConfig {
     /**
      * 截图频率，默认2000ms
      */
-    private int frequency;
+    private byte frequency;
 
     /**
      * 进程黑名单
      */
     private String appBlackList;
+
+    private String imageUuid;
 
 
 
@@ -19,11 +21,11 @@ public class ClientConfig {
      */
 
     public ClientConfig() {
-        frequency= 2000;
+        frequency= 2;
         appBlackList = "QQ";
     }
 
-    public int getFrequency() {
+    public byte getFrequency() {
         return frequency;
     }
 
