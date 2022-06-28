@@ -8,7 +8,7 @@ import java.sql.SQLException;
 /**
     *
     * 连接sqlite数据库,初始化数据库的表
-    *用户表Users（ID,Username用户名，Password密码，IP,Role身份，MAC,State状态）
+    * 用户表Users（ID,Username用户名，Password密码，IP,Role身份，MAC,State状态）
     * 图像表Images(ID（图片名）,Time时间，UserID用户)
     * 并把数据库连接封装在本类的属性中
  */
