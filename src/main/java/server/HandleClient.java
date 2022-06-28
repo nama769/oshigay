@@ -3,9 +3,7 @@ package server;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.nio.Buffer;
 import java.util.ArrayList;
@@ -14,25 +12,32 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import myutil.Protocol;
-import myutil.Result;
+import communication.Protocol;
+import communication.Result;
 
-
+/**
+ * 信息处理模块，负责所有服务端的处理逻辑
+ */
 public class HandleClient implements Runnable{
 	private Socket socket;
 	private DataInputStream dis=null;
+	private DataOutputStream dos=null;
 	private String key=null;
 	private boolean isLive=true;
 	public HandleClient(Socket socket){
 		this.socket=socket;
 		try {
 			this.dis=new DataInputStream(socket.getInputStream());
-			Server.view=new View();
+			this.dos=new DataOutputStream(socket.getOutputStream());
+//			Server.view=new View();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * 每有一个客户端连接到服务端时，都会自动调用此方法。用于处理客户端发送的数据。
+	 */
 	public void run() {
 		while(isLive){
 			Result result = null;

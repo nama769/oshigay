@@ -21,6 +21,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -36,12 +37,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import myutil.Protocol;
+import communication.Protocol;
+import communication.Result;
 
 /**
  * 封装被控端的方法
  * 
- * @author Administrator
+ *
  *
  */
 public class Client {
@@ -49,6 +51,7 @@ public class Client {
 	Socket socket;
 
 	DataOutputStream dos = null;
+	DataInputStream dis=null;
 	Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 	int width = (int) screensize.getWidth();
 	int height = (int) screensize.getHeight();
@@ -170,19 +173,38 @@ public class Client {
 		}
 	}
 
-	public static void main(String[] args) {
-		final Client client = new Client();
-		client.showSystemTray();// 显示托盘
-		client.conn("192.168.247.1",33000);
-		client.load();// 登录
-		client.showSystemTray();// 显示托盘
-		while (client.isLive) {
-			client.sendImage(client.getScreenShot());
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException ev) {
-				
-			}
+	public void run() {
+		while(isLive){
+			Result result = null;
+			result = Protocol.getResult(dis);
+
+			if(result!=null)
+				handleType(result.getType(),result.getData());
 		}
 	}
+
+	/**
+	 * 处理服务端发给客户端的数据，并让客户端进入相应逻辑
+	 * @param type
+	 * @param data
+	 */
+	private void handleType(int type,byte[] data) {
+
+	}
+
+//	public static void main(String[] args) {
+//		final Client client = new Client();
+//		client.showSystemTray();// 显示托盘
+//		client.conn("192.168.247.1",33000);
+//		client.load();// 登录
+//		client.showSystemTray();// 显示托盘
+//		while (client.isLive) {
+//			client.sendImage(client.getScreenShot());
+//			try {
+//				Thread.sleep(50);
+//			} catch (InterruptedException ev) {
+//
+//			}
+//		}
+//	}
 }

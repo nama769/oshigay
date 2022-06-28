@@ -42,8 +42,8 @@ public class View {
 	static DrawPanel centerPanel;
 	static List<String> list=new ArrayList<>();
 	public View(){
-		width = (int) (screensize.getWidth()*0.7);
-		height = (int) (screensize.getHeight()*0.8);
+		width = (int) (screensize.getWidth());
+		height = (int) (screensize.getHeight());
 	}
 	
 	//创建视图
@@ -103,7 +103,7 @@ public class View {
 	
 	/**
 	 * 添加树节点
-//	 * @param node
+	 * @param l
 	 */
 	public void setTreeNode(List<String> l){
 		list=l;
