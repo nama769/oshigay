@@ -5,7 +5,7 @@ package client;
  */
 public class Main {
     public static void main(String[] args) {
-        final Client client = new Client();
+        Client client = new Client();
         client.showSystemTray();// 显示托盘
         client.conn("192.168.247.1",33000);
 

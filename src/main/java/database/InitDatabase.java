@@ -24,8 +24,12 @@ public class InitDatabase {
 
     /**
      * 构造函数，进行数据库的连接，与数据库的初始化。
+     * @author 老张
      */
     public InitDatabase(){
+
+
+
 
     }
 

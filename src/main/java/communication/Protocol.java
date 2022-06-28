@@ -21,6 +21,16 @@ public class Protocol {
 	public static int TYPE_LOGOUT=3;//退出
 
 	/**
+	 * 老张 1-20
+	 * 老郭 21-40
+	 * 老杨 41-60
+	 * 老蒋 61 -80
+	 * 老刘 81 -100
+	 * 老大 101 -120
+	 *
+	 */
+
+	/**
 	 * 发送函数，
 	 * @param type 类型
 	 * @param bytes 传输的数据

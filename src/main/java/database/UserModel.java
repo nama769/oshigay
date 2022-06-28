@@ -10,11 +10,17 @@ public class UserModel {
     private String Username;
     private String Password;
     private String IP;
-    private String Role;
+
+
+    /**
+     *0 考生
+     * 1 老师
+     */
+    private int Role;
     private String MAC;
     private String State;
 
-    public UserModel(String ID, String username, String password, String IP, String role, String MAC, String state) {
+    public UserModel(String ID, String username, String password, String IP, int role, String MAC, String state) {
         this.ID = ID;
         Username = username;
         Password = password;
@@ -40,7 +46,7 @@ public class UserModel {
         this.IP = IP;
     }
 
-    public void setRole(String role) {
+    public void setRole(int role) {
         Role = role;
     }
 
@@ -68,7 +74,7 @@ public class UserModel {
         return IP;
     }
 
-    public String getRole() {
+    public int getRole() {
         return Role;
     }
 

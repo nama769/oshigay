@@ -24,12 +24,13 @@ public class Server {
 		} catch (UnknownHostException e1) {
 			e1.printStackTrace();
 		}
+		ClientConfig clientConfig = new ClientConfig();
 		try {
 			ServerSocket serverSocket=new ServerSocket(33000);
 //			view.create();
 			while(serverLive){
 				Socket socket=serverSocket.accept();
-				new Thread(new HandleClient(socket)).start();
+				new Thread(new HandleClient(socket,clientConfig)).start();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -14,6 +14,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import communication.Protocol;
 import communication.Result;
+import database.DatabaseTool;
+import database.UserModel;
 
 /**
  * 信息处理模块，负责所有服务端的处理逻辑
@@ -24,8 +26,15 @@ public class HandleClient implements Runnable{
 	private DataOutputStream dos=null;
 	private String key=null;
 	private boolean isLive=true;
-	public HandleClient(Socket socket){
+
+	private DatabaseTool databaseTool;
+
+	private ClientConfig clientConfig;
+
+	public HandleClient(Socket socket,ClientConfig clientConfig){
+		this.clientConfig = clientConfig;
 		this.socket=socket;
+		databaseTool = new DatabaseTool();
 		try {
 			this.dis=new DataInputStream(socket.getInputStream());
 			this.dos=new DataOutputStream(socket.getOutputStream());
@@ -48,6 +57,20 @@ public class HandleClient implements Runnable{
 		}
 	}
 
+	/**
+	 * 用户注册 老郭
+	 * 用户登录 老杨
+	 * 图像保存 老蒋
+	 * 图像查询 老刘
+	 * 频率更改 老大
+	 *
+	 *
+	 *
+	 *
+	 *
+	 * @param type
+	 * @param data
+	 */
 	//处理类型type的消息
 	private void handleType(int type,byte[] data) {
 		System.out.println(type);
@@ -60,6 +83,7 @@ public class HandleClient implements Runnable{
 				Server.view.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
 				Server.view.centerPanel.repaint();
 				bai.close();
+
 				break;
 			case 2:
 				String msg=new String(data);

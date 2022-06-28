@@ -27,6 +27,7 @@ public class DatabaseTool {
     /**
      * 添加一个用户
      * @return
+     * @author nama
      */
     public boolean addUser(UserModel user){
         try{
@@ -35,7 +36,7 @@ public class DatabaseTool {
             preparedStatement.setString(2,user.getUsername());
             preparedStatement.setString(3,user.getPassword());
             preparedStatement.setString(4,user.getIP());
-            preparedStatement.setString(5,user.getRole());
+            preparedStatement.setInt(5,user.getRole());
             preparedStatement.setString(6,user.getMAC());
             preparedStatement.setString(7,user.getState());
             preparedStatement.execute();
@@ -46,4 +47,6 @@ public class DatabaseTool {
         }
         return true;
     }
+
+
 }

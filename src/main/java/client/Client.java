@@ -53,6 +53,16 @@ public class Client {
 	DataOutputStream dos = null;
 	DataInputStream dis=null;
 	Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+
+	/**
+	 * ip
+	 * mac
+	 * username
+	 * role
+	 * int frequency
+	 * appList
+	 */
+
 	int width = (int) screensize.getWidth();
 	int height = (int) screensize.getHeight();
 	Robot robot;
@@ -62,6 +72,9 @@ public class Client {
 	public Client() {
 		try {
 			robot = new Robot();
+			//ip
+			//mac
+
 		} catch (AWTException e) {
 			e.printStackTrace();
 		}
@@ -74,6 +87,7 @@ public class Client {
 		try {
 			socket = new Socket(address, port);
 			dos = new DataOutputStream(socket.getOutputStream());
+			dis = new DataInputStream(socket.getInputStream());
 			// dos.writeUTF("client");
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -189,6 +203,7 @@ public class Client {
 	 * @param data
 	 */
 	private void handleType(int type,byte[] data) {
+
 
 	}
 
