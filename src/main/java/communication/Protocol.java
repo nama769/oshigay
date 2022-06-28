@@ -19,7 +19,8 @@ public class Protocol {
 	public static int TYPE_IMAGE=1;//图片
 	public static int TYPE_LOAD=2;//登录
 	public static int TYPE_LOGOUT=3;//退出
-	public static int TYPE_REGIST=21;//注册
+	public static int TYPE_REGISTER=21;//注册
+	public static int TYpe_REGISTER=22;
 	public static int TYPE_GRAPH=61;//图片
 	/**
 	 * 老张 1-20

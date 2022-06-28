@@ -122,15 +122,15 @@ public class HandleClient implements Runnable{
 				fre[0]=this.clientConfig.getFrequency();
 				Protocol.send(Protocol.TYPE_IMAGE,fre,dos);
 			case 41:
-				String msg = new String(data);
-				int UsernameLen = Integer.parseInt(msg.substring(0,1));
-				int UsernameEIndex = 1 + UsernameLen;
-				String Username = msg.substring(1,UsernameEIndex);
-				int PasswordLen = Integer.parseInt(msg.substring(UsernameEIndex,UsernameEIndex+1));
+				String message_41 = new String(data);
+				int UsernameLen_41 = Integer.parseInt(message_41.substring(0,1));
+				int UsernameEIndex = 1 + UsernameLen_41;
+				String Username = message_41.substring(1,UsernameEIndex);
+				int PasswordLen = Integer.parseInt(message_41.substring(UsernameEIndex,UsernameEIndex+1));
 				int PasswordBIndex = UsernameEIndex + 1;
 				int PasswordEIndex = PasswordBIndex + PasswordLen;
-				String Password = msg.substring(PasswordBIndex,PasswordEIndex);
-				userModel=findUser(Username,Password);
+				String Password_41 = message_41.substring(PasswordBIndex,PasswordEIndex);
+				userModel=databaseTool.findUser(Username,Password_41);
 				if(userModel==null){
 					sendMessage("Sorry,please try again");
 				}
@@ -142,16 +142,16 @@ public class HandleClient implements Runnable{
 				/**
 				 * 获取Username
 				 */
-				int UsernameLen = Integer.parseInt(message.substring(0,1));
-				int UsernameEndIndex = 1 + UsernameLen;
-				String Username = message.substring(1,UsernameEndIndex);
-				int PasswordLen = Integer.parseInt(message.substring(UsernameEndIndex,UsernameEndIndex+1));
+				int UsernameLen_21 = Integer.parseInt(message.substring(0,1));
+				int UsernameEndIndex = 1 + UsernameLen_21;
+				String Username_21 = message.substring(1,UsernameEndIndex);
+				int PasswordLen_21 = Integer.parseInt(message.substring(UsernameEndIndex,UsernameEndIndex+1));
 				/**
 				 * 获取Password
 				 */
 				int PasswordBeginIndex = UsernameEndIndex + 1;
-				int PasswordEndIndex = PasswordBeginIndex + PasswordLen;
-				String Password = message.substring(PasswordBeginIndex,PasswordEndIndex);
+				int PasswordEndIndex = PasswordBeginIndex + PasswordLen_21;
+				String Password_21 = message.substring(PasswordBeginIndex,PasswordEndIndex);
 //				int IPLen = Integer.parseInt((message.substring(PasswordEndIndex,PasswordEndIndex+1)));
 //				int IPBeginIndex = PasswordEndIndex+1;
 //				int IPEndIndex = IPBeginIndex + IPLen;
@@ -174,7 +174,7 @@ public class HandleClient implements Runnable{
 				/**
 				 * userModel传入database模块
 				 */
-				UserModel userModel = new UserModel(uuid,Username,Password,key,Role,MAC,UserModel.STATE_NO_LOGIN);
+				UserModel userModel = new UserModel(uuid,Username_21,Password_21,key,Role,MAC,UserModel.STATE_NO_LOGIN);
 				boolean RegisterResult = databaseTool.addUser(userModel);
 				String ReturnMsg = "";
 				if(RegisterResult==true){
