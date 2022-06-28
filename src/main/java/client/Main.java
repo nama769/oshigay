@@ -6,14 +6,15 @@ package client;
 public class Main {
     public static void main(String[] args) {
         Client client = new Client();
-        client.showSystemTray();// 显示托盘
+//        client.showSystemTray();// 显示托盘
         client.conn("192.168.247.1",33000);
 
         //        client.load();// 登录
         /**
          * 待实现，创建JFrame,进入登录注册，然后根据
          */
-
+        View view = new View();
+        view.create();
 
 //        client.showSystemTray();// 显示托盘
 
