@@ -37,15 +37,18 @@ public class View {
     Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
     private int width;
     private int height;
+    private  ClientConfig clientConfig;
 
     //以下必须为静态的，否则在HandleClient里访问不到
     static DefaultTreeModel model;
     static DefaultMutableTreeNode root;
     static DrawPanel centerPanel;
+
     static List<String> list=new ArrayList<>();
-    public View(){
+    public View(ClientConfig clientConfig){
         width = (int) (screensize.getWidth());
         height = (int) (screensize.getHeight());
+        this.clientConfig = clientConfig;
     }
 
     //创建视图
@@ -57,7 +60,7 @@ public class View {
         /**
          * 登录JPanel
          */
-        JFrame loginFrame = new LoginFrame(width,height);
+        JFrame loginFrame = new LoginFrame(width,height,this.clientConfig);
 //        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginFrame.setVisible(true);
 
