@@ -19,6 +19,9 @@ public class UserModel {
     private int Role;
     private String MAC;
     private String State;
+    public static final String STATE_NO_LOGIN = "RegisterWithoutLogin";
+
+
 
     public UserModel(String ID, String username, String password, String IP, int role, String MAC, String state) {
         this.ID = ID;

@@ -7,7 +7,7 @@ import java.sql.Timestamp;
  */
 public class ImageModel {
     private String ID;
-    private Timestamp CreatTime;
+    private long CreatTime;
     private String UserID;
 
     /**
@@ -16,7 +16,7 @@ public class ImageModel {
      * @param CreatTime
      * @param UserID
      */
-    public ImageModel(String ID,Timestamp CreatTime,String UserID){
+    public ImageModel(String ID,long CreatTime,String UserID){
         this.ID=ID;
         this.CreatTime=CreatTime;
         this.UserID=UserID;
@@ -26,7 +26,7 @@ public class ImageModel {
         this.ID = ID;
     }
 
-    public void setCreatTime(Timestamp creatTime) {
+    public void setCreatTime(long creatTime) {
         CreatTime = creatTime;
     }
 
@@ -38,7 +38,7 @@ public class ImageModel {
         return ID;
     }
 
-    public Timestamp getCreatTime() {
+    public long getCreatTime() {
         return CreatTime;
     }
 

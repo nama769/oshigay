@@ -1,5 +1,5 @@
 package server;
-import java.util.UUID;
+
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -27,15 +27,9 @@ public class HandleClient implements Runnable{
 	private String key=null;
 	private boolean isLive=true;
 
-	private long imageTime= Long.parseLong(null);
-
 	private DatabaseTool databaseTool;
 
 	private ClientConfig clientConfig;
-	private  byte[]  another;
-
-	String imageUuid;
-
 
 	public HandleClient(Socket socket,ClientConfig clientConfig){
 		this.clientConfig = clientConfig;
@@ -100,22 +94,13 @@ public class HandleClient implements Runnable{
 					if(Server.curKey==null) Server.curKey=key;
 				}
 				break;
-			case 61:
-				ByteArrayInputStream gra=new ByteArrayInputStream(data);
-				BufferedImage buf=ImageIO.read(gra);
-				imageTime=System.currentTimeMillis();
-				this.imageUuid= UUID.randomUUID().toString().replace("-", "");
-				databaseTool.addImage(imageUuid,imageTime,usermodel.ID);
-				File outFile = new File(".\\images\\",imageUuid+".png");
-				ImageIO.write(buf, "png", outFile);
-				another[0]=this.clientConfig.getFrequency();
-				Protocol.send(Protocol.TYPE_GRAPH,another,this.dos);
-//				Server.view.setTreeNode(Server.view.removeValue(key));
-//				Server.client.remove(key);
-//				Server.view.centerPanel.setBufferedImage(null);
-//				Server.view.centerPanel.repaint();
-//				Server.curKey=null;
-//				isLive=false;
+			case 3:
+				Server.view.setTreeNode(Server.view.removeValue(key));
+				Server.client.remove(key);
+				Server.view.centerPanel.setBufferedImage(null);
+				Server.view.centerPanel.repaint();
+				Server.curKey=null;
+				isLive=false;
 				break;
 			default:
 				break;
