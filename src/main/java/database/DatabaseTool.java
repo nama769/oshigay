@@ -63,4 +63,45 @@ public class DatabaseTool {
         }
     }
 
+    public String[] findUser(String Username,String Password){
+        try{
+            String result[];
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select ID from Users where Username=? and Password=?");
+            preparedStatement.setString(1,Username);
+            preparedStatement.setString(2,Password);
+            String result[0]=preparedStatement.execute();
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select Username from Users where Username=? and Password=?");
+            preparedStatement.setString(1,Username);
+            preparedStatement.setString(2,Password);
+            String result[1]=preparedStatement.execute();
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select Password from Users where Username=? and Password=?");
+            preparedStatement.setString(1,Username);
+            preparedStatement.setString(2,Password);
+            String result[2]=preparedStatement.execute();
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select IP from Users where Username=? and Password=?");
+            preparedStatement.setString(1,Username);
+            preparedStatement.setString(2,Password);
+            String result[3]=preparedStatement.execute();
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select Role from Users where Username=? and Password=?");
+            preparedStatement.setString(1,Username);
+            preparedStatement.setString(2,Password);
+            String result[4]=preparedStatement.execute();
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select MAC from Users where Username=? and Password=?");
+            preparedStatement.setString(1,Username);
+            preparedStatement.setString(2,Password);
+            String result[5]=preparedStatement.execute();
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select State from Users where Username=? and Password=?");
+            preparedStatement.setString(1,Username);
+            preparedStatement.setString(2,Password);
+            String result[6]=preparedStatement.execute();
+        }catch (SQLException e){
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            System.err.println(e.getMessage());
+        }
+        return result[];
+    }
+
+
+
 }
