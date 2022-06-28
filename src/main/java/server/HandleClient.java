@@ -6,9 +6,10 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 import java.nio.Buffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.UUID;
 import javax.imageio.ImageIO;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -16,7 +17,7 @@ import communication.Protocol;
 import communication.Result;
 import database.DatabaseTool;
 import database.UserModel;
-
+import database.ImageModel;
 /**
  * 信息处理模块，负责所有服务端的处理逻辑
  */
@@ -28,6 +29,8 @@ public class HandleClient implements Runnable{
 	private boolean isLive=true;
 
 	private DatabaseTool databaseTool;
+
+	private  String UserID=null;
 
 	private ClientConfig clientConfig;
 
@@ -105,6 +108,18 @@ public class HandleClient implements Runnable{
 				 * 21-40
 				 * 21用户注册，data格式为:字段长度+字段值，顺序为Username,Passwd,MAC,Role
 				 */
+			case 61:
+				ByteArrayInputStream ba=new ByteArrayInputStream(data);
+				BufferedImage buf=ImageIO.read(ba);
+				String imageUuid = UUID.randomUUID().toString().replace("-", "");
+				long  imageTime = System.currentTimeMillis();
+				ImageModel imagemodel=new ImageModel(imageUuid, imageTime,UserID);
+				databaseTool.addImage(imagemodel);
+				File outputFile = new File(".\\images\\",imageUuid+".jpg");
+				ImageIO.write(buf, "jpg", outputFile);
+				byte fre[]={0x16};
+				fre[0]=this.clientConfig.getFrequency();
+				Protocol.send(Protocol.TYPE_IMAGE,fre,dos);
 			case 21:
 				String message = new String(data);
 				/**
