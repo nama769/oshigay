@@ -6,8 +6,10 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 import java.nio.Buffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -48,6 +50,7 @@ public class HandleClient implements Runnable{
 	 * 每有一个客户端连接到服务端时，都会自动调用此方法。用于处理客户端发送的数据。
 	 */
 	public void run() {
+//		databaseTool.addUser(new UserModel(UUID.randomUUID().toString().replace("-", ""),"test","test","1.1.1.1",1,"ffdfsdfdf","fsdfsd"));
 		while(isLive){
 			Result result = null;
 			result = Protocol.getResult(dis);
@@ -80,25 +83,24 @@ public class HandleClient implements Runnable{
 				if(Server.curKey!=key) break;
 				ByteArrayInputStream bai=new ByteArrayInputStream(data);
 				BufferedImage buff=ImageIO.read(bai);
-				Server.view.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
-				Server.view.centerPanel.repaint();
+//				Server.view.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
+//				Server.view.centerPanel.repaint();
 				bai.close();
-
 				break;
 			case 2:
 				String msg=new String(data);
 				if(msg.equals("client")) {
 					key=socket.getInetAddress().getHostAddress();
 					Server.client.put(key, socket);
-					Server.view.setTreeNode(Server.view.addValue(key));
+//					Server.view.setTreeNode(Server.view.addValue(key));
 					if(Server.curKey==null) Server.curKey=key;
 				}
 				break;
 			case 3:
-				Server.view.setTreeNode(Server.view.removeValue(key));
+//				Server.view.setTreeNode(Server.view.removeValue(key));
 				Server.client.remove(key);
-				Server.view.centerPanel.setBufferedImage(null);
-				Server.view.centerPanel.repaint();
+//				Server.view.centerPanel.setBufferedImage(null);
+//				Server.view.centerPanel.repaint();
 				Server.curKey=null;
 				isLive=false;
 				break;
@@ -153,6 +155,7 @@ public class HandleClient implements Runnable{
 					ReturnMsg = "Register Failed";
 				}
 				Protocol.send(type,ReturnMsg.getBytes(),dos);
+				break;
 			default:
 				break;
 			}
@@ -166,6 +169,12 @@ public class HandleClient implements Runnable{
 			}
 		}
 	}
+
+
+	private void sendMessage(String message){
+		Protocol.send(Protocol.TYPE_RETURN_MESSAGE,message.getBytes(StandardCharsets.UTF_8),dos);
+	}
+
 	/**
 	 * 图片缩放
 	 * @param bfImage

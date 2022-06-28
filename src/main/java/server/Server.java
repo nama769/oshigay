@@ -20,6 +20,7 @@ public class Server {
 	public static boolean serverLive=true;
 	public static void main(String[] args) {
 		try {
+//			System.out.println(System.currentTimeMillis());
 			System.out.println(InetAddress.getLocalHost());
 		} catch (UnknownHostException e1) {
 			e1.printStackTrace();

@@ -15,7 +15,7 @@ public class Main {
          */
 
 
-        client.showSystemTray();// 显示托盘
+//        client.showSystemTray();// 显示托盘
 
         client.run();
 //        while (client.isLive) {

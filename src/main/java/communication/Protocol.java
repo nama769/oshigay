@@ -30,6 +30,9 @@ public class Protocol {
 	 *
 	 */
 
+
+	public static int TYPE_RETURN_MESSAGE=5;
+
 	/**
 	 * 发送函数，
 	 * @param type 类型
