@@ -52,6 +52,8 @@ public class Client {
 
 	DataOutputStream dos = null;
 	DataInputStream dis=null;
+
+	ClientConfig clientConfig;
 	Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 
 	/**
@@ -69,9 +71,10 @@ public class Client {
 	static boolean isLive = true;
 	JButton button;
 
-	public Client() {
+	public Client(ClientConfig clientConfig) {
 		try {
 			robot = new Robot();
+			this.clientConfig = clientConfig;
 			//ip
 			//mac
 
@@ -187,6 +190,9 @@ public class Client {
 		}
 	}
 
+	/**
+	 * 处理服务端返回数据
+	 */
 	public void run() {
 		while(isLive){
 			Result result = null;
@@ -204,8 +210,19 @@ public class Client {
 	 */
 	private void handleType(int type,byte[] data) {
 
+		switch (type) {
+			case 1:
+				break;
+			case 99:
+
+			default:
+				break;
+		}
+
 
 	}
+
+
 
 //	public static void main(String[] args) {
 //		final Client client = new Client();
