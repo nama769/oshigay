@@ -3,9 +3,10 @@ package server;
 public class ClientConfig {
 
     /**
-     * 截图频率，默认2000ms
+     * 截图频率，默认2s
      */
     private byte frequency;
+
 
     /**
      * 进程黑名单
@@ -29,7 +30,7 @@ public class ClientConfig {
         return frequency;
     }
 
-    public void setFrequency(int frequency) {
+    public void setFrequency(byte frequency) {
         this.frequency = frequency;
     }
 
