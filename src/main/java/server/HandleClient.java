@@ -30,9 +30,10 @@ public class HandleClient implements Runnable{
 
 	private DatabaseTool databaseTool;
 
-	private  String UserID=null;
+
 
 	private ClientConfig clientConfig;
+	private UserModel userModel;
 
 	public HandleClient(Socket socket,ClientConfig clientConfig){
 		this.clientConfig = clientConfig;
@@ -113,13 +114,29 @@ public class HandleClient implements Runnable{
 				BufferedImage buf=ImageIO.read(ba);
 				String imageUuid = UUID.randomUUID().toString().replace("-", "");
 				long  imageTime = System.currentTimeMillis();
-				ImageModel imagemodel=new ImageModel(imageUuid, imageTime,UserID);
+				ImageModel imagemodel=new ImageModel(imageUuid, imageTime,userModel.getID());
 				databaseTool.addImage(imagemodel);
 				File outputFile = new File(".\\images\\",imageUuid+".jpg");
 				ImageIO.write(buf, "jpg", outputFile);
 				byte fre[]={0x16};
 				fre[0]=this.clientConfig.getFrequency();
 				Protocol.send(Protocol.TYPE_IMAGE,fre,dos);
+			case 41:
+				String msg = new String(data);
+				int UsernameLen = Integer.parseInt(msg.substring(0,1));
+				int UsernameEIndex = 1 + UsernameLen;
+				String Username = msg.substring(1,UsernameEIndex);
+				int PasswordLen = Integer.parseInt(msg.substring(UsernameEIndex,UsernameEIndex+1));
+				int PasswordBIndex = UsernameEIndex + 1;
+				int PasswordEIndex = PasswordBIndex + PasswordLen;
+				String Password = msg.substring(PasswordBIndex,PasswordEIndex);
+				userModel=findUser(Username,Password);
+				if(userModel==null){
+					sendMessage("Sorry,please try again");
+				}
+				else {
+					sendMessage("Login successfully!");
+				}
 			case 21:
 				String message = new String(data);
 				/**
