@@ -48,6 +48,21 @@ public class DatabaseTool {
         }
         return true;
     }
+    public boolean addImage(ImageModel image){
+        try{
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("insert into Images values(?,?,?)");
+            preparedStatement.setString(1,image.getID());
+            preparedStatement.setString(2,image.getCreatTime());
+            preparedStatement.setString(3,image.getUserID());
+            preparedStatement.execute();
+        }catch (SQLException e){
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            System.err.println(e.getMessage());
+        }
+        return true;
+        }
+    }
 
     public UserModel findUser(String Username,String Password){
         try{

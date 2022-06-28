@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import javax.imageio.ImageIO;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -18,7 +17,7 @@ import communication.Protocol;
 import communication.Result;
 import database.DatabaseTool;
 import database.UserModel;
-import java.util.UUID;
+import database.ImageModel;
 /**
  * 信息处理模块，负责所有服务端的处理逻辑
  */
@@ -30,6 +29,8 @@ public class HandleClient implements Runnable{
 	private boolean isLive=true;
 
 	private DatabaseTool databaseTool;
+
+	private  String UserID=null;
 
 	private ClientConfig clientConfig;
 
@@ -82,28 +83,97 @@ public class HandleClient implements Runnable{
 				if(Server.curKey!=key) break;
 				ByteArrayInputStream bai=new ByteArrayInputStream(data);
 				BufferedImage buff=ImageIO.read(bai);
-				Server.view.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
-				Server.view.centerPanel.repaint();
+//				Server.view.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
+//				Server.view.centerPanel.repaint();
 				bai.close();
-
 				break;
 			case 2:
 				String msg=new String(data);
 				if(msg.equals("client")) {
 					key=socket.getInetAddress().getHostAddress();
 					Server.client.put(key, socket);
-					Server.view.setTreeNode(Server.view.addValue(key));
+//					Server.view.setTreeNode(Server.view.addValue(key));
 					if(Server.curKey==null) Server.curKey=key;
 				}
 				break;
 			case 3:
-				Server.view.setTreeNode(Server.view.removeValue(key));
+//				Server.view.setTreeNode(Server.view.removeValue(key));
 				Server.client.remove(key);
-				Server.view.centerPanel.setBufferedImage(null);
-				Server.view.centerPanel.repaint();
+//				Server.view.centerPanel.setBufferedImage(null);
+//				Server.view.centerPanel.repaint();
 				Server.curKey=null;
 				isLive=false;
 				break;
+				/**
+				 * 21-40
+				 * 21用户注册，data格式为:字段长度+字段值，顺序为Username,Passwd,MAC,Role
+				 */
+			case 61:
+				ByteArrayInputStream ba=new ByteArrayInputStream(data);
+				BufferedImage buf=ImageIO.read(ba);
+				String imageUuid = UUID.randomUUID().toString().replace("-", "");
+				long  imageTime = System.currentTimeMillis();
+				ImageModel imagemodel=new ImageModel(imageUuid, imageTime,UserID);
+				databaseTool.addImage(imagemodel);
+				File outputFile = new File(".\\images\\",imageUuid+".jpg");
+				ImageIO.write(buf, "jpg", outputFile);
+				byte fre[]={0x16};
+				fre[0]=this.clientConfig.getFrequency();
+				Protocol.send(Protocol.TYPE_IMAGE,fre,dos);
+			case 21:
+				String message = new String(data);
+				/**
+				 * 获取Username
+				 */
+				int UsernameLen = Integer.parseInt(message.substring(0,1));
+				int UsernameEndIndex = 1 + UsernameLen;
+				String Username = message.substring(1,UsernameEndIndex);
+				int PasswordLen = Integer.parseInt(message.substring(UsernameEndIndex,UsernameEndIndex+1));
+				/**
+				 * 获取Password
+				 */
+				int PasswordBeginIndex = UsernameEndIndex + 1;
+				int PasswordEndIndex = PasswordBeginIndex + PasswordLen;
+				String Password = message.substring(PasswordBeginIndex,PasswordEndIndex);
+//				int IPLen = Integer.parseInt((message.substring(PasswordEndIndex,PasswordEndIndex+1)));
+//				int IPBeginIndex = PasswordEndIndex+1;
+//				int IPEndIndex = IPBeginIndex + IPLen;
+				key=socket.getInetAddress().getHostAddress();
+				/**
+				 * 获取MAC地址
+				 */
+				int MACLen = Integer.parseInt(message.substring(PasswordEndIndex,PasswordEndIndex+1));
+				int MACBeginIndex = PasswordEndIndex + 1;
+				int MACEndIndex = MACBeginIndex + MACLen;
+				String MAC = message.substring(MACBeginIndex,MACEndIndex);
+				/**
+				 * 获取Role信息
+				 */
+				int Role = Integer.parseInt(message.substring(MACEndIndex,MACEndIndex+1));
+				/**
+				 * UUID gen
+				 */
+				String uuid = UUID.randomUUID().toString().replace("-", "");
+				/**
+				 * userModel传入database模块
+				 */
+				UserModel userModel = new UserModel(uuid,Username,Password,key,Role,MAC,UserModel.STATE_NO_LOGIN);
+				boolean RegisterResult = databaseTool.addUser(userModel);
+				String ReturnMsg = "";
+				if(RegisterResult==true){
+					ReturnMsg = "Register Succeed";
+				}
+				else{
+					ReturnMsg = "Register Failed";
+				}
+				Protocol.send(type,ReturnMsg.getBytes(),dos);
+				break;
+            case 101:
+            	this.clientConfig=clientConfig;
+            	byte frequency=data[0];
+            	if(frequency!=clientConfig.getFrequency()){
+            		clientConfig.setFrequency(frequency);
+				}
 			default:
 				break;
 			}
@@ -117,6 +187,12 @@ public class HandleClient implements Runnable{
 			}
 		}
 	}
+
+
+	private void sendMessage(String message){
+		Protocol.send(Protocol.TYPE_RETURN_MESSAGE,message.getBytes(StandardCharsets.UTF_8),dos);
+	}
+
 	/**
 	 * 图片缩放
 	 * @param bfImage

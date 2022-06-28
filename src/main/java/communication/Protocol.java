@@ -20,6 +20,7 @@ public class Protocol {
 	public static int TYPE_LOAD=2;//登录
 	public static int TYPE_LOGOUT=3;//退出
 	public static int TYPE_REGIST=21;//注册
+	public static int TYPE_GRAPH=61;//图片
 	/**
 	 * 老张 1-20
 	 * 老郭 21-40
@@ -31,8 +32,8 @@ public class Protocol {
 	 */
 
 
-	public static int TYPE_RETURN_MESSAGE=5;
-
+	public static int TYPE_RETURN_MESSAGE=5;//消息回应
+    public static int TYPE_CHANGE=101;//频率更改
 	/**
 	 * 发送函数，
 	 * @param type 类型
