@@ -207,8 +207,8 @@ public class HandleClient implements Runnable{
 		/**
 		 * 获取MAC地址
 		 */
-		int MACLen = Integer.parseInt(message.substring(PasswordEndIndex,PasswordEndIndex+1));
-		int MACBeginIndex = PasswordEndIndex + 1;
+		int MACLen = 17;
+		int MACBeginIndex = PasswordEndIndex ;
 		int MACEndIndex = MACBeginIndex + MACLen;
 		String MAC = message.substring(MACBeginIndex,MACEndIndex);
 		/**

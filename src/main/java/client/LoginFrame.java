@@ -2,6 +2,13 @@ package client;
 
 import communication.Protocol;
 
+import communication.Protocol;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.io.*;
 import java.util.*;
@@ -142,7 +149,11 @@ public class LoginFrame extends JFrame {
                                                     */
                                                    public void actionPerformed(ActionEvent e)
                                                    {
-                                                       registerUtil();
+                                                       try {
+                                                           registerUtil ();
+                                                       } catch (Exception ex) {
+                                                           ex.printStackTrace();
+                                                       }
 //                                                       System.exit(0);
                                                    }
                                                });
@@ -169,8 +180,37 @@ public class LoginFrame extends JFrame {
     }
 
 
-    private void registerUtil(){
-
+    private void registerUtil() throws Exception {
+        /**
+         * 获取Username Password
+         */
+        String loginUserName = myTextField.getText();
+        String loginPassword = new String(passwordField.getPassword());
+        int loginUserNameTempLength = loginUserName.length();
+        String loginUsernameLen = String.valueOf(loginUserNameTempLength);
+        int loginPasswordTempLength = loginPassword.length();
+        String loginPasswordLen = String.valueOf(loginPasswordTempLength);
+        /**
+         * 获取MAC地址，形如00-00-00-00-00-00
+         */
+        byte[] mac = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < mac.length; i++) {
+            sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+        }
+        String MACaddr = sb.toString();
+        /**
+         * 或取身份信息
+         */
+        String role = "";
+        if(selectedItem.equals("学生")){
+            role = "0";
+        }
+        else if(selectedItem.equals("教师")){
+            role = "1";
+        }
+        String RegisterData = loginUsernameLen + loginUserName + loginPasswordLen + loginPassword + MACaddr + role;
+        Protocol.send(Protocol.TYPE_REGISTER,RegisterData.getBytes(),clientConfig.getDos());
     }
 
     private static final int DEFAULT_WIDTH  = 300;
