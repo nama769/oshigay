@@ -32,6 +32,7 @@ public class MonitorFrame extends JFrame {
      */
     public static void monitorUtil(){
 
+
     }
 
     private static final int DEFAULT_WIDTH = 450;

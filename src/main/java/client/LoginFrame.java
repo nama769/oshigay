@@ -138,6 +138,7 @@ public class LoginFrame extends JFrame {
                                                     */
                                                    public void actionPerformed(ActionEvent e)
                                                    {
+                                                       registerUtil();
 //                                                       System.exit(0);
                                                    }
                                                });
@@ -156,6 +157,11 @@ public class LoginFrame extends JFrame {
             String loginUserName =  myTextField.getText();
             String loginPassword = new String(passwordField.getPassword());
 
+
+    }
+
+
+    private void registerUtil(){
 
     }
 
