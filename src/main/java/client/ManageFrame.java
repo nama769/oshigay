@@ -112,17 +112,5 @@ public class ManageFrame {
         frame.setVisible(true);
     }
 
-    /**
-     * 监考端逻辑
-     */
-    public static void manageUtil(){
-        while(true){
-
-        }
-
-    }
-
-
-
 
 }

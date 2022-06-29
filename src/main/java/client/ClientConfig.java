@@ -13,6 +13,7 @@ public class ClientConfig {
     private DataOutputStream dos;
     private DataInputStream dis;
 
+    private byte frequency;
     public Socket getSocket() {
         return socket;
     }
@@ -37,6 +38,8 @@ public class ClientConfig {
         this.dis = dis;
     }
 
+
+
     public ClientConfig() {
         this.login = 0;
         this.role = 0;
@@ -57,4 +60,9 @@ public class ClientConfig {
     public void setRole(int role) {
         this.role = role;
     }
+
+    public byte getFrequency(){return frequency;}
+
+    public void setFrequency(byte frequency){this.frequency=frequency;}
+
 }

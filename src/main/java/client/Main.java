@@ -5,8 +5,10 @@ package client;
  */
 public class Main {
     public static void main(String[] args) {
-        Client client = new Client();
+
 //        client.showSystemTray();// 显示托盘
+        ClientConfig clientConfig=new ClientConfig();
+        Client client = new Client(clientConfig);
         client.conn("192.168.247.1",33000);
 
         //        client.load();// 登录

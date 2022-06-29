@@ -14,9 +14,8 @@ import javax.swing.table.*;
  * 登录/注册（用户管理模块），注册界面（账户名，密码，角色，【IP,MAC】），登录界面（账户名，密码）
  */
 public class LoginFrame extends JFrame {
-    public LoginFrame(int width, int height, final ClientConfig clientConfig)
+    public LoginFrame(int width,int height)
     {
-        this.clientConfig = clientConfig;
         setTitle("登录窗口");
         setResizable(false);
         setLocation(350, 200);
@@ -100,26 +99,27 @@ public class LoginFrame extends JFrame {
                                               {
                                                   public void actionPerformed(ActionEvent e)
                                                   {
-                                                      loginUtil();
+                                                      loginDispose();
 
-                                                      clientConfig.setLogin(1);
+                                                      login=1;
 
-
-
-                                                      if(clientConfig.getLogin() == 1)
+                                                      if(login == 1)
                                                       {
                                                           if(selectedItem.equals("学生"))
                                                           {
                                                               JFrame f = new MonitorFrame();
                                                               f.setVisible(true);
                                                               dispose();
-                                                              MonitorFrame.monitorUtil();
+                                                              try {
+                                                                  ((MonitorFrame) f).SendImage();
+                                                              } catch (IOException ex) {
+                                                                  throw new RuntimeException(ex);
+                                                              }
                                                           }
                                                           else if(selectedItem.equals("教师"))
                                                           {
                                                               ManageFrame f = new ManageFrame();
                                                               dispose();
-                                                              ManageFrame.manageUtil();
                                                           }
                                                       }
                                                   }
@@ -127,19 +127,14 @@ public class LoginFrame extends JFrame {
         buttonPanel.add(loginButton);
 
         //add cancel button
-        JButton cancelButton = new JButton("注册");
+        JButton cancelButton = new JButton("取消");
         cancelButton.addActionListener(new
                                                ActionListener()
                                                {
-
-                                                   /**
-                                                    * 注册逻辑
-                                                    * @param e
-                                                    */
                                                    public void actionPerformed(ActionEvent e)
                                                    {
                                                        registerUtil();
-//                                                       System.exit(0);
+                                                       System.exit(0);
                                                    }
                                                });
         buttonPanel.add(cancelButton);
@@ -148,15 +143,76 @@ public class LoginFrame extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    /**
-     * 登录逻辑
-     */
-    private void loginUtil()
+    private void loginDispose()
     {
+        // String url = "jdbc:odbc:java"; //数据源名字为java
+//        String url = "jdbc:sqlserver://127.0.0.1:1433;DatabaseName=学生选课管理系统";
+////        String url = "jdbc:mysql://127.0.0.1:3306/学生选课管理系统?serverTimezone=UTC";
+//        String username = "test";
+//        String password = "testtest";
+//        //加载驱动程序以连接数据库
+//        try
+//        {
+////             Class.forName( "sun.jdbc.odbc.JdbcOdbcDriver" );
+//            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+////            Class.forName("com.mysql.cj.jdbc.Driver");
+//            loginConnection = DriverManager.getConnection( url, username, password );
+//        }
+//        //捕获加载驱动程序异常
+//        catch ( ClassNotFoundException cnfex )
+//        {
+//            JOptionPane.showMessageDialog (LoginFrame.this, cnfex,
+//                    "学生选课管理系统", JOptionPane.WARNING_MESSAGE );
+//            System.exit( 1 );     // terminate program
+//        }
+//        //捕获连接数据库异常
+//        catch ( SQLException sqlex )
+//        {
+//            //sqlex.printStackTrace();
+//            JOptionPane.showMessageDialog (LoginFrame.this, "无法连接到SQL SERVER ，\n请确认SQL SERVER是否运行\n或数据源设置是否正确！ ",
+//                    "学生选课管理系统", JOptionPane.WARNING_MESSAGE );
+//            System.exit( 1 );  // terminate program
+//        }
+
+//        try
+//        {
             String loginQuery;
             String loginUserName =  myTextField.getText();
             String loginPassword = new String(passwordField.getPassword());
-
+//            if(myTextField.getText().equals( "" ))
+//            {
+//                JOptionPane.showMessageDialog( LoginFrame.this, "用户名必须为字母、数字和、汉字\n及其组合，不允许为空格键。",
+//                        "登陆", JOptionPane.WARNING_MESSAGE );
+//                //setTitle( "无记录显示" );
+//                return;
+//            }
+//            if(selectedItem.equals("教师"))
+//                loginQuery = "SELECT * FROM 教师表 WHERE(登陆帐号='" + loginUserName  + "' AND 登陆密码 ='" + loginPassword + "')";
+//            else if(selectedItem.equals("管理员"))
+//                loginQuery = "SELECT * FROM 管理员 WHERE(用户名='" + loginUserName + "' AND 密码 ='" + loginPassword + "')";
+//            else //(selectedItem.equals("学生"))
+//                loginQuery = "SELECT * FROM 学生基本信息表 WHERE(学号='" + loginUserName + "' AND 密码 ='" + loginPassword + "')";
+//            loginStatement = loginConnection.createStatement();
+//            System.out.println(loginQuery);  // XD
+//            loginResultSet = loginStatement.executeQuery( loginQuery );
+//            boolean Records = loginResultSet.next();
+//            if ( ! Records )
+//            {
+//                JOptionPane.showMessageDialog(LoginFrame.this, "没有此用户或密码错误" );
+//                return;
+//            }
+//            else
+//            {
+//                login = 1 ;
+//            }
+//            loginConnection.close();
+//        }
+//        catch(SQLException sqlex)
+//        {
+//            //sqlex.printStackTrace();
+//            JOptionPane.showMessageDialog (LoginFrame.this, sqlex,
+//                    "学生选课管理系统", JOptionPane.WARNING_MESSAGE );
+//        }
 
     }
 
@@ -172,9 +228,7 @@ public class LoginFrame extends JFrame {
     private JPasswordField passwordField;
     private JComboBox userCombo;
     private String selectedItem;
-    private ClientConfig clientConfig;
-
-
+    private int login = 0;
     private Connection loginConnection;
     private Statement loginStatement;
     private ResultSet loginResultSet;
