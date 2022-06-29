@@ -156,7 +156,10 @@ public class LoginFrame extends JFrame {
             String loginQuery;
             String loginUserName =  myTextField.getText();
             String loginPassword = new String(passwordField.getPassword());
-
+            String loginUserNameLen=loginUserName.length();
+            String loginPasswordLen=loginPassword.length();
+            String dataS=loginUserNameLen+loginUserName+loginPasswordLen+loginPassword;
+            Protocol.send(TYPE_LOGIN,dataS.getBytes(),clientConfig.getDos());
 
     }
 
