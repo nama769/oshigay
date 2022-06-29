@@ -32,7 +32,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 import communication.Protocol;
@@ -219,7 +220,8 @@ public class Client implements Runnable {
                     Protocol.send(TYPE_GET_IMAGE,clientConfig.getFocusImageType().getBytes(StandardCharsets.UTF_8),clientConfig.getDos());
                 }
                 try {
-                    Thread.sleep(4000);
+                    System.out.println(getFormatTime()+" Teacher端正在选中："+clientConfig.getFocusImageType());
+                    Thread.sleep((int)clientConfig.getFrequency()*1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -255,7 +257,12 @@ public class Client implements Runnable {
 		while(isLive){
 			Result result = null;
             try {
-                result = Protocol.getResult(dis);
+                result = Protocol.getResult(clientConfig.getDis());
+//                try {
+//                    Thread.sleep(1500);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -278,21 +285,27 @@ public class Client implements Runnable {
 				break;
 			case TYPE_CHANGE:
 				type_change(data);
+                System.out.println(getFormatTime()+" Student端正在更改监管频率："+(int)clientConfig.getFrequency());
                 break;
 			case TYPE_GRAPH:
 				GetFrequency(data);
+                System.out.println(getFormatTime()+" Student端正在更改监管频率："+(int)clientConfig.getFrequency());
 				break;
             case TYPE_LOGIN_REPAY:
                 type_login(data);
+                System.out.println(getFormatTime()+" 登录成功");
                 break;
             case TYPE_STUDENT_UP:
                 type_student_up(data);
+                System.out.println(getFormatTime()+" Teacher端接收到新Student："+new String(data));
                 break;
             case TYPE_RET_SELECT_IMAGEID:
                 type_get_select_imageid(data);
+                System.out.println(getFormatTime()+" Teacher端接收到最新ImageID："+new String(data));
                 break;
             case TYPE_RET_IMAGE:
                 type_ret_image(data);
+                System.out.println(getFormatTime()+" Teacher端接收到最新Image");
                 break;
 			default:
 				break;
@@ -347,6 +360,12 @@ public class Client implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String getFormatTime(){
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        Date date = new Date(System.currentTimeMillis());
+        return formatter.format(date);
     }
 
 

@@ -24,7 +24,13 @@ public class Server {
 		} catch (UnknownHostException e1) {
 			e1.printStackTrace();
 		}
-		ClientConfig clientConfig = new ClientConfig();
+		ClientConfig clientConfig;
+		if(args.length==1){
+			clientConfig= new ClientConfig(args[0]);
+		}else {
+			clientConfig = new ClientConfig(".\\images\\");
+		}
+
 		DatabaseTool databaseTool = new DatabaseTool();
 		try {
 			ServerSocket serverSocket=new ServerSocket(33000);

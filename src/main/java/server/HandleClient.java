@@ -7,7 +7,9 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,6 +64,11 @@ public class HandleClient implements Runnable{
 			Result result = null;
 			try {
 				result = Protocol.getResult(dis);
+//				try {
+//					Thread.sleep(1500);
+//				} catch (InterruptedException e) {
+//					throw new RuntimeException(e);
+//				}
 			} catch (IOException e) {
 				/**
 				 * 掉线处理函数
@@ -125,31 +132,42 @@ public class HandleClient implements Runnable{
 				 * 21用户注册，data格式为:字段长度+字段值，顺序为Username,Passwd,MAC,Role
 				 */
 			case TYPE_GRAPH:
-				type_graph(data);
+				System.out.println(getFormatTime()+" Server端保存了来自 "+userModel.getUsername()+" 的图片："+type_graph(data));
 				break;
 			case TYPE_LOGIN:
 				type_login(data);
+				if(userModel!=null){
+					System.out.println(getFormatTime()+" Server端接受了来自 "+userModel.getUsername()+" 的登录请求");
+				}else {
+					System.out.println(getFormatTime()+" Server端拒绝了来自 "+socket.getInetAddress().getHostAddress()+" 的非法登录请求");
+				}
 				break;
 			case TYPE_REGISTER:
 				type_register(data);
+				System.out.println(getFormatTime()+" Server端处理了来自 "+socket.getInetAddress().getHostAddress()+" 的注册请求");
 				break;
             case TYPE_CHANGE:
 				type_change(data);
+				System.out.println(getFormatTime()+" Server端更改了截图频率为 "+(int)clientConfig.getFrequency());
 				break;
 			case TYPE_FIND_IMAGE_BY_USERNAME:
 				type_find_image_by_username(data);
+				System.out.println(getFormatTime()+" Server端收到了图片查询请求 查询参数：username="+new String(data));
 				break;
 			case TYPE_FIND_IMAGE_BY_IP:
 				type_find_image_by_ip(data);
+				System.out.println(getFormatTime()+" Server端收到了图片查询请求 查询参数：ip="+new String(data));
 				break;
 			case TYPE_FIND_IMAGE_BY_MAC:
 				type_find_image_by_mac(data);
+				System.out.println(getFormatTime()+" Server端收到了图片查询请求 查询参数：MAC="+new String(data));
 				break;
 			case TYPE_GET_IMAGE:
-				type_get_image(data);
+				System.out.println(getFormatTime()+" Server端收到了对于 "+new String(data)+" 的最新图片查询请求："+type_get_image(data));
 				break;
 			case TYPE_LOAD_IMAGE:
 				type_load_image(data);
+				System.out.println(getFormatTime()+" Server端收到了对于 "+new String(data)+" 的图片传输请求");
 				break;
 			default:
 				break;
@@ -167,7 +185,7 @@ public class HandleClient implements Runnable{
 
 
 
-	private void type_graph(byte[] data) throws IOException {
+	private String type_graph(byte[] data) throws IOException {
 		ByteArrayInputStream ba=new ByteArrayInputStream(data);
 		BufferedImage buf=ImageIO.read(ba);
 		String imageUuid = UUID.randomUUID().toString().replace("-", "");
@@ -181,6 +199,7 @@ public class HandleClient implements Runnable{
 		Protocol.send(TYPE_GRAPH,fre,dos);
 		clientConfig.setUserNewImage(userModel.getUsername(),imagemodel.getID());
 		System.out.println(clientConfig.getUserImageMap());
+		return imagemodel.getID();
 	}
 
 	private void type_login(byte[] data){
@@ -286,9 +305,10 @@ public class HandleClient implements Runnable{
 		databaseTool.findImageID(m);
 	}
 
-	private void type_get_image(byte[] data){
+	private String type_get_image(byte[] data){
 		String username = new String(data);
 		Protocol.send(TYPE_RET_SELECT_IMAGEID,clientConfig.getUserImageMap().get(username).getBytes(StandardCharsets.UTF_8),dos);
+		return clientConfig.getUserImageMap().get(username);
 	}
 
 	private void type_load_image(byte[] data) {
@@ -327,5 +347,11 @@ public class HandleClient implements Runnable{
         g.drawImage(image, 0, 0, null); // 绘制缩小后的图   
         g.dispose();
 		return tag;
+	}
+
+	public static String getFormatTime(){
+		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+		java.util.Date date = new Date(System.currentTimeMillis());
+		return formatter.format(date);
 	}
 }

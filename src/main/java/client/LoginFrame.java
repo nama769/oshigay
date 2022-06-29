@@ -178,7 +178,7 @@ public class LoginFrame extends JFrame {
         Protocol.send(TYPE_LOGIN, dataS.getBytes(), clientConfig.getDos());
         clientConfig.setState(UserModel.STATE_LOGINING);
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

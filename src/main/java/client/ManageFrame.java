@@ -77,9 +77,11 @@ public class ManageFrame {
                 JTree tree=(JTree) e.getSource();
                 DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) tree
                         .getLastSelectedPathComponent();
-                String nodeName=selectionNode.toString();
-                curKey=nodeName;
-                clientConfig.setFocusImageType(curKey);
+                if(selectionNode!=null){
+                    String nodeName=selectionNode.toString();
+                    curKey=nodeName;
+                    clientConfig.setFocusImageType(curKey);
+                }
             }
         });
 

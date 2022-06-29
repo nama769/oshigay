@@ -96,13 +96,13 @@ public class ClientConfig {
      *
      */
 
-    public ClientConfig() {
+    public ClientConfig(String imageSavePath) {
         frequency= 8;
         appBlackList = "QQ";
         allClient = new ArrayList<>();
         downClient = new ArrayList<>();
         userImageMap = new HashMap<>();
-        imageSavePath = ".\\images\\";
+        this.imageSavePath = imageSavePath;
     }
 
     public byte getFrequency() {
