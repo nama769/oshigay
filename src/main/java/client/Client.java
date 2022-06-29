@@ -237,6 +237,7 @@ public class Client {
 
 
 
+
 //	public static void main(String[] args) {
 //		final Client client = new Client();
 //		client.showSystemTray();// 显示托盘

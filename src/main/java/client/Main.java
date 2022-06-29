@@ -5,8 +5,8 @@ package client;
  */
 public class Main {
     public static void main(String[] args) {
-        ClientConfig clientConfig = new ClientConfig();
-        Client client = new Client(clientConfig);
+        ClientConfig clientconfig = new ClientConfig();
+        Client client = new Client(clientconfig);
 //        client.showSystemTray();// 显示托盘
         client.conn("192.168.247.1",33000);
 
@@ -14,7 +14,7 @@ public class Main {
         /**
          * 待实现，创建JFrame,进入登录注册，然后根据
          */
-        View view = new View(clientConfig);
+        View view = new View(clientconfig);
         view.create();
 
 //        client.showSystemTray();// 显示托盘
