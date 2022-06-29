@@ -217,11 +217,6 @@ public class Client {
 			case 1:
 				break;
 			case 99:
-				break;
-			case Protocol.TYPE_GRAPH:
-				byte fre=data[0];
-                ChangeFrequency(fre);
-                break;
 
 			default:
 				break;
@@ -229,9 +224,7 @@ public class Client {
 
 
 	}
-    private void ChangeFrequency(byte fre){
-		clientConfig.setFrequency(fre);
-	}
+
 
 
 
