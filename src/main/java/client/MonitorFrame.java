@@ -1,4 +1,5 @@
 package client;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,8 +26,8 @@ import communication.Result;
 public class MonitorFrame extends JFrame {
     private JLabel label1;
     private GridBagConstraints constraints;
-    public MonitorFrame()
-    {
+
+    public MonitorFrame() {
         setTitle("考生端");
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setLocation(350, 200);
@@ -42,6 +43,7 @@ public class MonitorFrame extends JFrame {
 
 
     }
+
     public void SendImage() throws IOException {
         DataOutputStream dos = clientConfig.getDos();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -55,11 +57,15 @@ public class MonitorFrame extends JFrame {
                 ImageIO.write(bfImage, "png", bao);
                 Protocol.send(Protocol.TYPE_GRAPH, bao.toByteArray(), dos);
                 bao.close();
+                Thread.sleep(clientConfig.getFrequency());
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
+
     /**
      * 考生端逻辑
      */
