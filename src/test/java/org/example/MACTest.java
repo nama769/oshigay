@@ -7,14 +7,14 @@ import java.net.NetworkInterface;
 
 public class MACTest{
     public static void main(String[] args) throws Exception{
-        byte[] mac = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < mac.length; i++) {
-            sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-        }
-        String MACaddr = sb.toString();
-        System.out.println(MACaddr);
-        System.out.println(sb.length());
+//        byte[] mac = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < mac.length; i++) {
+//            sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+//        }
+//        String MACaddr = sb.toString();
+//        System.out.println();
+        System.out.println("12313"+123);
     }
 //    public void handle(byte[] data)
 //    public static void main() throws Exception {

@@ -1,4 +1,5 @@
 package client;
+
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -19,13 +20,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -38,8 +37,10 @@ import java.nio.charset.Charset;
 
 import communication.Protocol;
 import communication.Result;
+import database.UserModel;
 
-import static communication.Protocol.TYPE_CHANGE;
+import static communication.Protocol.*;
+
 
 /**
  * 封装被控端的方法
@@ -82,6 +83,7 @@ public class Client implements Runnable {
             e.printStackTrace();
         }
     }
+
 
     /**
      * 连接服务器
@@ -193,19 +195,70 @@ public class Client implements Runnable {
         }
     }
 
-    /**
-     * 处理服务端返回数据
-     */
-    public void run() {
-        while (true) {
+	/**
+	 * 处理服务端返回数据
+	 */
+	public void run() {
+		if(clientConfig.getRole()==0){
+            /**
+             * 考生端
+             */
+            while(isLive){
+                try {
+                    sendImage();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }else {
+            /**
+             * 老师端
+             */
+            while(isLive){
+                if(clientConfig.getFocusImageType()!=null){
+                    Protocol.send(TYPE_GET_IMAGE,clientConfig.getFocusImageType().getBytes(StandardCharsets.UTF_8),clientConfig.getDos());
+                }
+                try {
+                    Thread.sleep(4000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+//                ManageFrame.centerPanel.setBufferedImage();
 
+            }
+        }
+	}
+
+    public void sendImage() throws IOException {
+        DataOutputStream dos = clientConfig.getDos();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = (int) screenSize.getWidth();
+        int height = (int) screenSize.getHeight();
+        while (isLive) {
+            BufferedImage bfImage = robot.createScreenCapture(new Rectangle(0, 0, width, height));
+            BufferedImage tag = new BufferedImage((int) (width * 0.5), (int) (height * 0.5), BufferedImage.TYPE_INT_RGB);
+            try {
+                ByteArrayOutputStream bao = new ByteArrayOutputStream();
+                ImageIO.write(bfImage, "png", bao);
+                Protocol.send(Protocol.TYPE_GRAPH, bao.toByteArray(), dos);
+                bao.close();
+                Thread.sleep(((int)clientConfig.getFrequency())*1000);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
-    public void handleResult() {
-        while (isLive) {
-            Result result = null;
-            result = Protocol.getResult(dis);
+	public void handleResult() {
+		while(isLive){
+			Result result = null;
+            try {
+                result = Protocol.getResult(dis);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             if (result != null)
                 handleType(result.getType(), result.getData());
@@ -220,17 +273,30 @@ public class Client implements Runnable {
      */
     private void handleType(int type, byte[] data) {
 
-        switch (type) {
-            case 1:
+		switch (type) {
+			case 1:
+				break;
+			case TYPE_CHANGE:
+				type_change(data);
                 break;
-            case TYPE_CHANGE:
-                type_change(data);
-            case Protocol.TYPE_GRAPH:
-                GetFrequency(data);
+			case TYPE_GRAPH:
+				GetFrequency(data);
+				break;
+            case TYPE_LOGIN_REPAY:
+                type_login(data);
                 break;
-            default:
+            case TYPE_STUDENT_UP:
+                type_student_up(data);
                 break;
-        }
+            case TYPE_RET_SELECT_IMAGEID:
+                type_get_select_imageid(data);
+                break;
+            case TYPE_RET_IMAGE:
+                type_ret_image(data);
+                break;
+			default:
+				break;
+		}
 
 
     }
@@ -240,12 +306,53 @@ public class Client implements Runnable {
         clientConfig.setFrequency(fre);
     }
 
-    private void type_change(byte[] data) {
-        byte frequency = data[0];
-        if (frequency != clientConfig.getFrequency()) {
-            clientConfig.setFrequency(frequency);
+   private void type_change(byte[] data){
+	   byte frequency=data[0];
+	   if(frequency!=clientConfig.getFrequency()){
+		   clientConfig.setFrequency(frequency);
+	   }
+   }
+
+   private void type_login(byte[] data){
+        String msg = new String(data);
+        if(msg.split("\n")[0].equals("Login successfully!")){
+            clientConfig.setState(UserModel.STATE_LOGIN);
+            clientConfig.setLogin(1);
+            clientConfig.setRole(Integer.parseInt(msg.split("\n")[1]));
+        }else {
+            clientConfig.setState(UserModel.STATE_LOGIN_FAIL);
+        }
+   }
+
+   private void type_student_up(byte[] data){
+        String username = new String(data);
+//        clientConfig.;
+        ManageFrame.setTreeNode(ManageFrame.addValue(username));
+        if(ManageFrame.curKey==null) ManageFrame.curKey=username;
+    }
+
+    private void type_get_select_imageid(byte[] data){
+        String imageid = new String(data);
+        Protocol.send(TYPE_LOAD_IMAGE,imageid.getBytes(StandardCharsets.UTF_8),dos);
+    }
+
+    private void type_ret_image(byte[] data){
+        ByteArrayInputStream bai=new ByteArrayInputStream(data);
+        BufferedImage buff= null;
+        try {
+            buff = ImageIO.read(bai);
+            ManageFrame.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
+            ManageFrame.centerPanel.repaint();
+            bai.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
+
+
+
+
+
     public String[] exeMenu() throws IOException {
         ProcessBuilder pb = new ProcessBuilder("tasklist");
         Process p = pb.start();

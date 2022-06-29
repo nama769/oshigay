@@ -19,7 +19,9 @@ public class MonitorFrame extends JFrame {
     private JLabel label1;
     private GridBagConstraints constraints;
 
-    public MonitorFrame() {
+    private ClientConfig clientConfig;
+
+    public MonitorFrame(ClientConfig clientConfig) {
         setTitle("考生端");
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setLocation(350, 200);
@@ -33,32 +35,12 @@ public class MonitorFrame extends JFrame {
         constraints.gridheight = 1;
         myPanel.add(label1, constraints);
         add(myPanel, BorderLayout.CENTER);
+        this.clientConfig=clientConfig;
 //        label1.setText(UserModel.STATE_LOGIN);
 
 
     }
 
-    public void SendImage() throws IOException {
-        DataOutputStream dos = clientConfig.getDos();
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = (int) screenSize.getWidth();
-        int height = (int) screenSize.getHeight();
-        while (true) {
-            BufferedImage bfImage = robot.createScreenCapture(new Rectangle(0, 0, width, height));
-            BufferedImage tag = new BufferedImage((int) (width * 0.5), (int) (height * 0.5), BufferedImage.TYPE_INT_RGB);
-            try {
-                ByteArrayOutputStream bao = new ByteArrayOutputStream();
-                ImageIO.write(bfImage, "png", bao);
-                Protocol.send(Protocol.TYPE_GRAPH, bao.toByteArray(), dos);
-                bao.close();
-                Thread.sleep(clientConfig.getFrequency());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 
     /**
      * 考生端逻辑
@@ -72,5 +54,4 @@ public class MonitorFrame extends JFrame {
     private CardLayout card;
     private JPanel myPanel;
     Robot robot;
-    ClientConfig clientConfig;
 }

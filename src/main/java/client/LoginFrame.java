@@ -5,6 +5,7 @@ import communication.Protocol;
 import communication.Protocol;
 
 import communication.Protocol;
+import database.UserModel;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -110,24 +111,27 @@ public class LoginFrame extends JFrame {
                                                   public void actionPerformed(ActionEvent e) {
                                                       loginUtil();
 
-                                                      clientConfig.setLogin(1);
+//                                                      clientConfig.setLogin(1);
 
-
-                                                      if (clientConfig.getLogin() == 1) {
-                                                          if (selectedItem.equals("学生")) {
-                                                              JFrame f = new MonitorFrame();
+                                                      if(clientConfig.getLogin() == 1) {
+                                                          /**
+                                                           * 登录成功
+                                                           */
+                                                          if(clientConfig.getRole()==0) {
+                                                              /**
+                                                               * 考生
+                                                               */
+                                                              JFrame f = new MonitorFrame(clientConfig);
                                                               f.setVisible(true);
                                                               dispose();
                                                               MonitorFrame.monitorUtil(clientConfig);
-
-                                                              try {
-                                                                  ((MonitorFrame) f).SendImage();
-                                                              } catch (IOException ex) {
-                                                                  throw new RuntimeException(ex);
-                                                              }
-
-                                                          } else if (selectedItem.equals("教师")) {
-                                                              ManageFrame f = new ManageFrame();
+                                                          }
+                                                          else if(clientConfig.getRole()==1)
+                                                          {
+                                                              /**
+                                                               * 老师
+                                                               */
+                                                              ManageFrame f = new ManageFrame(clientConfig);
                                                               dispose();
                                                               ManageFrame.manageUtil(clientConfig);
                                                           }
@@ -151,7 +155,6 @@ public class LoginFrame extends JFrame {
                                                        } catch (Exception ex) {
                                                            ex.printStackTrace();
                                                        }
-//                                                       System.exit(0);
                                                    }
                                                });
         buttonPanel.add(cancelButton);
@@ -163,7 +166,7 @@ public class LoginFrame extends JFrame {
     /**
      * 登录逻辑
      */
-    private void loginUtil() {
+    private void loginUtil()  {
         String loginQuery;
         String loginUserName = myTextField.getText();
         String loginPassword = new String(passwordField.getPassword());
@@ -173,6 +176,17 @@ public class LoginFrame extends JFrame {
         String loginPasswordLen = String.valueOf(loginPasswordL);
         String dataS = loginUserNameLen + loginUserName + loginPasswordLen + loginPassword;
         Protocol.send(TYPE_LOGIN, dataS.getBytes(), clientConfig.getDos());
+        clientConfig.setState(UserModel.STATE_LOGINING);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        while (clientConfig.getState().equals(UserModel.STATE_LOGINING)){
+            /**
+             * wati server 处理登录请求
+              */
+        }
 
     }
 

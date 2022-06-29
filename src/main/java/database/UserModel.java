@@ -23,7 +23,8 @@ public class UserModel {
 
     public static final String STATE_LOGIN = "HasLogin";
     public static final String STATE_WARRING = "HasWarring";
-
+    public static final String STATE_LOGINING = "logining";
+    public static final String STATE_LOGIN_FAIL = "loginfail";
 
 
     public UserModel(String ID, String username, String password, String IP, int role, String MAC, String state) {

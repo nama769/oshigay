@@ -3,6 +3,8 @@ package client;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientConfig {
     private int login;
@@ -23,6 +25,20 @@ public class ClientConfig {
             "2345Explorer.exe"};
     private static final int BLACKLIST_NUMBER=16;
 
+//    private Map<String,Socket> client=new HashMap<String,Socket>();
+
+    /**
+     *老师端正在请求谁的图像，用户列表中选中了谁，或按IP，USERNAME,MAC进行选择
+     */
+    private String focusImageType;
+
+    public String getFocusImageType() {
+        return focusImageType;
+    }
+
+    public void setFocusImageType(String focusImageType) {
+        this.focusImageType = focusImageType;
+    }
 
     public String getState() {
         return state;

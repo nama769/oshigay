@@ -22,6 +22,12 @@ public class Protocol {
 	public static final int TYPE_REGISTER=21;//注册
 	public static final int TYpe_REGISTER=22;
 	public static final int TYPE_GRAPH=61;//图片
+
+	public static final int TYPE_GET_IMAGE=4;//老师端向服务端请求图片
+	public static final int TYPE_STUDENT_UP=6;//服务端向老师报告有新同学上线
+	public static final int TYPE_RET_SELECT_IMAGEID = 7;//向老师返回他想请求的最新imageid
+	public static final int TYPE_LOAD_IMAGE = 8;//通过imageid返回图像
+	public static final int TYPE_RET_IMAGE = 9;//返回图像数据
 	/**
 	 * 老张 1-20
 	 * 老郭 21-40
@@ -37,6 +43,7 @@ public class Protocol {
     public static final int TYPE_CHANGE=101;//频率更改
 
 	public static final int TYPE_LOGIN = 41;//登录
+	public static final int TYPE_LOGIN_REPAY = 42;//登录
 
 	public static final int TYPE_FIND_IMAGE_BY_USERNAME = 81;//通过username查找imagesid
 	public static final int TYPE_FIND_IMAGE_BY_IP = 82;//通过ip查找imagesid
@@ -66,18 +73,11 @@ public class Protocol {
 	 * @param dis 输出流连接
 	 * @return 返回封装好的Result(包含类型，数据)
 	 */
-	public static Result getResult(DataInputStream dis){
-			
-			try {
-				byte type = dis.readByte();
-				int totalLen=dis.readInt();
-				byte[] bytes=new byte[totalLen-4-1];
-				dis.readFully(bytes);
-				return new Result(type&0xFF,totalLen,bytes);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
+	public static Result getResult(DataInputStream dis)throws IOException{
+		byte type = dis.readByte();
+		int totalLen=dis.readInt();
+		byte[] bytes=new byte[totalLen-4-1];
+		dis.readFully(bytes);
+		return new Result(type&0xFF,totalLen,bytes);
 	}
 }

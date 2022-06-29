@@ -113,31 +113,4 @@ public class View {
 //        frame.setVisible(true);
     }
 
-    /**
-     * 添加树节点
-     * @param l
-     */
-    public void setTreeNode(List<String> l){
-        list=l;
-        root.removeAllChildren();
-        for(int i=0;i<list.size();i++){
-            DefaultMutableTreeNode node1=new DefaultMutableTreeNode(list.get(i));
-            root.add(node1);
-        }
-        model.reload();
-    }
-
-    public List<String> addValue(String key){
-        list.add(key);
-        return list;
-    }
-
-    public List<String> removeValue(String key){
-        list.remove(key);
-        return list;
-    }
-
-    public void clear(){
-        list.clear();
-    }
 }

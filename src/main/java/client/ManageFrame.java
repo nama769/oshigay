@@ -1,10 +1,13 @@
 package client;
 
 
+import communication.Protocol;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +22,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 
 import static client.View.model;
+import static communication.Protocol.*;
 
 /**
  * 管理模块界面，包含树形考生列表，图像展示，图像查询，指令下发（更改截图频率）
@@ -43,10 +47,15 @@ public class ManageFrame {
     static DrawPanel centerPanel;
     static List<String> list=new ArrayList<>();
 
-    public ManageFrame() {
+    private ClientConfig clientConfig;
+
+    public ManageFrame(final ClientConfig clientConfig) {
 
         width = (int)  screensize.getWidth();
         height =  (int) screensize.getHeight();
+
+        this.clientConfig=clientConfig;
+
         //得到内容窗格
         JFrame frame=new JFrame("远程屏幕监视系统");
         Container container=frame.getContentPane();
@@ -70,6 +79,7 @@ public class ManageFrame {
                         .getLastSelectedPathComponent();
                 String nodeName=selectionNode.toString();
                 curKey=nodeName;
+                clientConfig.setFocusImageType(curKey);
             }
         });
 
@@ -149,15 +159,12 @@ public class ManageFrame {
         new Thread(new Client(clientConfig)).start();
     }
 
-    private static void CHANGE(){
-        ClientConfig clientConfig= new ClientConfig();
-        byte managefrequency=2; /**这里的2应该为通过监听获取的教师端输入的截屏频率*/
-        byte[] bytes=new byte[0];
-        bytes[0]=managefrequency;
-        Protocol.send(101,bytes, clientConfig.getDos());
+    private void changeFrequency(String managefrequency){
+        clientConfig.setFrequency((byte) Integer.parseInt(managefrequency));
+        Protocol.send(TYPE_CHANGE,new byte[]{(byte) Integer.parseInt(managefrequency)}, clientConfig.getDos());
     }
 
-    public static void buttonUtil(){
+    public void buttonUtil(){
         String frequency =  frequencyTextField.getText();
         String findUsername =  findUsernameTextField.getText();
         String findMAC =  findMACTextField.getText();
@@ -165,6 +172,7 @@ public class ManageFrame {
             /**
              * 更改频率
              */
+            changeFrequency(frequency);
         }else if(!findUsername.equals("")){
             /**
              * 按用户名查找
@@ -174,6 +182,34 @@ public class ManageFrame {
              * 按MAC查找
              */
         }
+    }
+
+    /**
+     * 添加树节点
+     * @param l
+     */
+    public static void setTreeNode(List<String> l){
+        list=l;
+        root.removeAllChildren();
+        for(int i=0;i<list.size();i++){
+            DefaultMutableTreeNode node1=new DefaultMutableTreeNode(list.get(i));
+            root.add(node1);
+        }
+        model.reload();
+    }
+
+    public static List<String> addValue(String key){
+        list.add(key);
+        return list;
+    }
+
+    public static List<String> removeValue(String key){
+        list.remove(key);
+        return list;
+    }
+
+    public static void clear(){
+        list.clear();
     }
 
 }

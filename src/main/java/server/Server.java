@@ -1,4 +1,6 @@
 package server;
+import database.DatabaseTool;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -23,12 +25,13 @@ public class Server {
 			e1.printStackTrace();
 		}
 		ClientConfig clientConfig = new ClientConfig();
+		DatabaseTool databaseTool = new DatabaseTool();
 		try {
 			ServerSocket serverSocket=new ServerSocket(33000);
 //			view.create();
 			while(serverLive){
 				Socket socket=serverSocket.accept();
-				new Thread(new HandleClient(socket,clientConfig)).start();
+				new Thread(new HandleClient(socket,clientConfig,databaseTool)).start();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

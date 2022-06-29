@@ -41,10 +41,10 @@ public class HandleClient implements Runnable{
 	private ClientConfig clientConfig;
 	private UserModel userModel;
 
-	public HandleClient(Socket socket,ClientConfig clientConfig){
+	public HandleClient(Socket socket,ClientConfig clientConfig,DatabaseTool databaseTool){
 		this.clientConfig = clientConfig;
 		this.socket=socket;
-		databaseTool = new DatabaseTool();
+		this.databaseTool = databaseTool;
 		try {
 			this.dis=new DataInputStream(socket.getInputStream());
 			this.dos=new DataOutputStream(socket.getOutputStream());
@@ -60,8 +60,17 @@ public class HandleClient implements Runnable{
 	public void run() {
 		while(isLive){
 			Result result = null;
-			result = Protocol.getResult(dis);
-			
+			try {
+				result = Protocol.getResult(dis);
+			} catch (IOException e) {
+				/**
+				 * 掉线处理函数
+				 */
+				clientConfig.addDownClient(userModel);
+				System.out.println(userModel.getUsername()+" 已下线！");
+				isLive=false;
+			}
+
 			if(result!=null)
 			handleType(result.getType(),result.getData());
 		}
@@ -136,6 +145,12 @@ public class HandleClient implements Runnable{
 			case TYPE_FIND_IMAGE_BY_MAC:
 				type_find_image_by_mac(data);
 				break;
+			case TYPE_GET_IMAGE:
+				type_get_image(data);
+				break;
+			case TYPE_LOAD_IMAGE:
+				type_load_image(data);
+				break;
 			default:
 				break;
 			}
@@ -159,11 +174,13 @@ public class HandleClient implements Runnable{
 		long  imageTime = System.currentTimeMillis();
 		ImageModel imagemodel=new ImageModel(imageUuid, imageTime,userModel.getID());
 		databaseTool.addImage(imagemodel);
-		File outputFile = new File(".\\images\\",imageUuid+".jpg");
+		File outputFile = new File(clientConfig.getImageSavePath(),imageUuid+".jpg");
 		ImageIO.write(buf, "jpg", outputFile);
 		byte fre[]={0x16};
 		fre[0]=this.clientConfig.getFrequency();
 		Protocol.send(TYPE_GRAPH,fre,dos);
+		clientConfig.setUserNewImage(userModel.getUsername(),imagemodel.getID());
+		System.out.println(clientConfig.getUserImageMap());
 	}
 
 	private void type_login(byte[] data){
@@ -177,10 +194,18 @@ public class HandleClient implements Runnable{
 		String Password_41 = message_41.substring(PasswordBIndex,PasswordEIndex);
 		userModel=databaseTool.findUser(Username,Password_41);
 		if(userModel==null){
-			sendMessage("Sorry,please try again");
+			sendMessage(TYPE_LOGIN_REPAY,"Sorry,please try again");
 		}
 		else {
-			sendMessage("Login successfully!");
+			sendMessage(TYPE_LOGIN_REPAY,"Login successfully!\n"+userModel.getRole());
+			clientConfig.addClient(userModel);
+			if(userModel.getRole()==1){
+				clientConfig.setDosTeacher(dos);
+			}else {
+				if(clientConfig.getDosTeacher()!=null){
+					Protocol.send(TYPE_STUDENT_UP,userModel.getUsername().getBytes(StandardCharsets.UTF_8),clientConfig.getDosTeacher());
+				}
+			}
 		}
 	}
 
@@ -261,9 +286,29 @@ public class HandleClient implements Runnable{
 		databaseTool.findImageID(m);
 	}
 
+	private void type_get_image(byte[] data){
+		String username = new String(data);
+		Protocol.send(TYPE_RET_SELECT_IMAGEID,clientConfig.getUserImageMap().get(username).getBytes(StandardCharsets.UTF_8),dos);
+	}
 
-	private void sendMessage(String message){
-		Protocol.send(Protocol.TYPE_RETURN_MESSAGE,message.getBytes(StandardCharsets.UTF_8),dos);
+	private void type_load_image(byte[] data) {
+		try {
+			String imageid = new String(data);
+			ByteArrayOutputStream bao = new ByteArrayOutputStream();
+			File image = new File(clientConfig.getImageSavePath()+imageid+".jpg");
+			BufferedImage bfImage = (BufferedImage) ImageIO.read(image);
+			ImageIO.write(bfImage, "png", bao);
+			Protocol.send(TYPE_RET_IMAGE,bao.toByteArray(),dos);
+			bao.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+
+	private void sendMessage(int type ,String message){
+		Protocol.send(type,message.getBytes(StandardCharsets.UTF_8),dos);
 	}
 
 	/**
