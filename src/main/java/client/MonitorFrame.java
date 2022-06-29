@@ -2,6 +2,7 @@ package client;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.awt.Graphics2D;
@@ -28,6 +29,7 @@ public class MonitorFrame extends JFrame {
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setLocation(350, 200);
         setResizable(false);
+
     }
     public void SendImage() throws IOException {
         DataOutputStream dos = clientConfig.getDos();
@@ -45,9 +47,9 @@ public class MonitorFrame extends JFrame {
             }catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
+
 
     private static final int DEFAULT_WIDTH = 450;
     private static final int DEFAULT_HEIGHT = 300;
