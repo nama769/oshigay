@@ -1,5 +1,7 @@
 package client;
 
+import communication.Protocol;
+
 import java.sql.*;
 import java.io.*;
 import java.util.*;
@@ -10,12 +12,13 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 
+import static communication.Protocol.TYPE_LOGIN;
+
 /**
  * 登录/注册（用户管理模块），注册界面（账户名，密码，角色，【IP,MAC】），登录界面（账户名，密码）
  */
 public class LoginFrame extends JFrame {
-    public LoginFrame(int width, int height, final ClientConfig clientConfig)
-    {
+    public LoginFrame(int width, int height, final ClientConfig clientConfig) {
         this.clientConfig = clientConfig;
         setTitle("登录窗口");
         setResizable(false);
@@ -105,11 +108,8 @@ public class LoginFrame extends JFrame {
                                                       clientConfig.setLogin(1);
 
 
-
-                                                      if(clientConfig.getLogin() == 1)
-                                                      {
-                                                          if(selectedItem.equals("学生"))
-                                                          {
+                                                      if(clientConfig.getLogin() == 1) {
+                                                          if(selectedItem.equals("学生")) {
                                                               JFrame f = new MonitorFrame();
                                                               f.setVisible(true);
                                                               dispose();
@@ -155,12 +155,16 @@ public class LoginFrame extends JFrame {
     /**
      * 登录逻辑
      */
-    private void loginUtil()
-    {
-            String loginQuery;
-            String loginUserName =  myTextField.getText();
-            String loginPassword = new String(passwordField.getPassword());
-
+    private void loginUtil() {
+        String loginQuery;
+        String loginUserName = myTextField.getText();
+        String loginPassword = new String(passwordField.getPassword());
+        int loginUserNameL = loginUserName.length();
+        String loginUserNameLen = String.valueOf(loginUserNameL);
+        int loginPasswordL = loginPassword.length();
+        String loginPasswordLen = String.valueOf(loginPasswordL);
+        String dataS = loginUserNameLen + loginUserName + loginPasswordLen + loginPassword;
+        Protocol.send(TYPE_LOGIN, dataS.getBytes(), clientConfig.getDos());
 
     }
 
