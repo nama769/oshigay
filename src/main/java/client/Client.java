@@ -91,6 +91,9 @@ public class Client {
 			socket = new Socket(address, port);
 			dos = new DataOutputStream(socket.getOutputStream());
 			dis = new DataInputStream(socket.getInputStream());
+			clientConfig.setDis(dis);
+			clientConfig.setDos(dos);
+			clientConfig.setSocket(socket);
 			// dos.writeUTF("client");
 		} catch (UnknownHostException e) {
 			e.printStackTrace();

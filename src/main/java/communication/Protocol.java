@@ -16,12 +16,12 @@ public class Protocol {
 	/**
 	 * 此位置可以任意扩展扩展。但要求不能有冲突（值不能相同，且为0-255）
 	 */
-	public static int TYPE_IMAGE=1;//图片
-	public static int TYPE_LOAD=2;//登录
-	public static int TYPE_LOGOUT=3;//退出
-	public static int TYPE_REGISTER=21;//注册
-	public static int TYpe_REGISTER=22;
-	public static int TYPE_GRAPH=61;//图片
+	public static final int TYPE_IMAGE=1;//图片
+	public static final int TYPE_LOAD=2;//登录
+	public static final int TYPE_LOGOUT=3;//退出
+	public static final int TYPE_REGISTER=21;//注册
+	public static final int TYpe_REGISTER=22;
+	public static final int TYPE_GRAPH=61;//图片
 	/**
 	 * 老张 1-20
 	 * 老郭 21-40
@@ -33,8 +33,15 @@ public class Protocol {
 	 */
 
 
-	public static int TYPE_RETURN_MESSAGE=5;//消息回应
-    public static int TYPE_CHANGE=101;//频率更改
+	public static final int TYPE_RETURN_MESSAGE=5;//消息回应
+    public static final int TYPE_CHANGE=101;//频率更改
+
+	public static final int TYPE_LOGIN = 41;//登录
+
+	public static final int TYPE_FIND_IMAGE_BY_USERNAME = 81;//通过username查找imagesid
+	public static final int TYPE_FIND_IMAGE_BY_IP = 82;//通过ip查找imagesid
+	public static final int TYPE_FIND_IMAGE_BY_MAC = 83;//通过mac查找imagesid
+
 	/**
 	 * 发送函数，
 	 * @param type 类型
