@@ -4,6 +4,8 @@ import communication.Protocol;
 
 import communication.Protocol;
 
+import communication.Protocol;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -19,7 +21,7 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 
-import static communication.Protocol.TYPE_LOGIN;
+import static communication.Protocol.*;
 
 /**
  * 登录/注册（用户管理模块），注册界面（账户名，密码，角色，【IP,MAC】），登录界面（账户名，密码）
@@ -120,6 +122,7 @@ public class LoginFrame extends JFrame {
                                                               JFrame f = new MonitorFrame();
                                                               f.setVisible(true);
                                                               dispose();
+                                                              MonitorFrame.monitorUtil(clientConfig);
                                                               try{
                                                                   ((MonitorFrame) f).SendImage();
                                                               } catch (IOException ex) {
@@ -130,7 +133,7 @@ public class LoginFrame extends JFrame {
                                                           {
                                                               ManageFrame f = new ManageFrame();
                                                               dispose();
-                                                              ManageFrame.manageUtil();
+                                                              ManageFrame.manageUtil(clientConfig);
                                                           }
                                                       }
                                                   }

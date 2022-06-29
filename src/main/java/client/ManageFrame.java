@@ -1,18 +1,8 @@
 package client;
 
 
-import communication.Protocol;
-import server.DrawPanel;
-import server.Server;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -21,14 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes.Name;
 
-import javax.print.attribute.standard.PDLOverrideSupported;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -49,6 +32,10 @@ public class ManageFrame {
     Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
     private int width;
     private int height;
+    public static JTextField frequencyTextField;
+    public static JTextField findUsernameTextField;
+    public static JTextField findMACTextField;
+    public static JLabel frequencyLabel;
 
     //以下必须为静态的，否则在HandleClient里访问不到
     static DefaultTreeModel model;
@@ -76,14 +63,13 @@ public class ManageFrame {
         tree.setBackground(Color.darkGray);
 
         tree.addTreeSelectionListener(new TreeSelectionListener() {
-
             @Override
             public void valueChanged(TreeSelectionEvent e) {
                 JTree tree=(JTree) e.getSource();
                 DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) tree
                         .getLastSelectedPathComponent();
                 String nodeName=selectionNode.toString();
-                Server.curKey=nodeName;
+                curKey=nodeName;
             }
         });
 
@@ -103,7 +89,7 @@ public class ManageFrame {
 
             @Override
             public void windowClosed(WindowEvent e) {
-                Server.serverLive=false;
+                serverLive=false;
             }
 
         });
@@ -112,16 +98,55 @@ public class ManageFrame {
         frame.setSize(width,height);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        JPanel myPanel = new JPanel(new GridBagLayout());
+        frequencyLabel = new JLabel("截图频率（s）");
+//        constraints.gridx = 1;
+        constraints.gridx = 0;
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        myPanel.add(frequencyLabel, constraints);
+
+        frequencyTextField = new JTextField();
+        frequencyTextField.setPreferredSize(new Dimension(120, 25));
+        myPanel.add(frequencyTextField, constraints);
+
+
+        JLabel findLabel2 = new JLabel("用户名查找");
+        myPanel.add(findLabel2, constraints);
+
+        findUsernameTextField = new JTextField();
+        findUsernameTextField.setPreferredSize(new Dimension(120, 25));
+        myPanel.add(findUsernameTextField, constraints);
+
+
+        JLabel findLabel3 = new JLabel("MAC查找");
+        myPanel.add(findLabel3, constraints);
+
+        findMACTextField = new JTextField();
+        findMACTextField.setPreferredSize(new Dimension(120, 25));
+        myPanel.add(findMACTextField, constraints);
+
+        JButton myButton = new JButton("确定");
+        myButton.addActionListener(new
+                                                  ActionListener()
+                                                  {
+                                                      public void actionPerformed(ActionEvent e)
+                                                      {
+                                                          buttonUtil();
+                                                      }
+                                                  });
+        myPanel.add(myButton);
+
+        container.add(myPanel, BorderLayout.EAST);
     }
 
     /**
      * 监考端逻辑
      */
-    public static void manageUtil(){
-        while(true){
-           CHANGE();
-        }
-
+    public static void manageUtil(ClientConfig clientConfig){
+        new Thread(new Client(clientConfig)).start();
     }
 
     private static void CHANGE(){
@@ -132,6 +157,23 @@ public class ManageFrame {
         Protocol.send(101,bytes, clientConfig.getDos());
     }
 
-
+    public static void buttonUtil(){
+        String frequency =  frequencyTextField.getText();
+        String findUsername =  findUsernameTextField.getText();
+        String findMAC =  findMACTextField.getText();
+        if(!frequency.equals("")){
+            /**
+             * 更改频率
+             */
+        }else if(!findUsername.equals("")){
+            /**
+             * 按用户名查找
+             */
+        }else if(!findMAC.equals("")){
+            /**
+             * 按MAC查找
+             */
+        }
+    }
 
 }

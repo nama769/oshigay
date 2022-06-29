@@ -19,7 +19,7 @@ public class Main {
 
 //        client.showSystemTray();// 显示托盘
 
-        client.run();
+        client.handleResult();
 //        while (client.isLive) {
 ////            client.sendImage(client.getScreenShot());
 //            try {

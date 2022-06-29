@@ -3,23 +3,11 @@ package client;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.net.Socket;
-import java.nio.Buffer;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.imageio.ImageIO;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import communication.Protocol;
 import communication.Result;
-
 /**
  * 监控模块，状态显示，托盘化，后台获取进程列表
  */
@@ -40,6 +28,8 @@ public class MonitorFrame extends JFrame {
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
         myPanel.add(label1, constraints);
+        add(myPanel, BorderLayout.CENTER);
+//        label1.setText(UserModel.STATE_LOGIN);
 
 
     }
@@ -69,6 +59,9 @@ public class MonitorFrame extends JFrame {
     /**
      * 考生端逻辑
      */
+    public static void monitorUtil(ClientConfig clientConfig){
+        new Thread(new Client(clientConfig)).start();
+    }
 
     private static final int DEFAULT_WIDTH = 450;
     private static final int DEFAULT_HEIGHT = 300;

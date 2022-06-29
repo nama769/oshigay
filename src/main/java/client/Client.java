@@ -45,7 +45,7 @@ import static communication.Protocol.TYPE_CHANGE;
 /**
  * 封装被控端的方法
  */
-public class Client {
+public class Client implements Runnable {
 
 	Socket socket;
 
@@ -192,13 +192,19 @@ public class Client {
         }
     }
 
-    /**
-     * 处理服务端返回数据
-     */
-    public void run() {
-        while (isLive) {
-            Result result = null;
-            result = Protocol.getResult(dis);
+	/**
+	 * 处理服务端返回数据
+	 */
+	public void run() {
+		while(true){
+
+		}
+	}
+
+	public void handleResult() {
+		while(isLive){
+			Result result = null;
+			result = Protocol.getResult(dis);
 
             if (result != null)
                 handleType(result.getType(), result.getData());

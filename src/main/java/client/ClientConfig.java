@@ -14,6 +14,17 @@ public class ClientConfig {
     private DataOutputStream dos;
     private DataInputStream dis;
 
+    private String state;//状态
+
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public Socket getSocket() {
         return socket;
     }
