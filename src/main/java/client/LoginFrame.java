@@ -93,11 +93,9 @@ public class LoginFrame extends JFrame {
 
         //get selected item, so we can decide to show which frame
         userCombo.addActionListener(new
-                                            ActionListener()
-                                            {
-                                                public void actionPerformed(ActionEvent e)
-                                                {
-                                                    selectedItem = (String)userCombo.getSelectedItem();     //方法别忘了加括号
+                                            ActionListener() {
+                                                public void actionPerformed(ActionEvent e) {
+                                                    selectedItem = (String) userCombo.getSelectedItem();     //方法别忘了加括号
                                                 }
                                             });
         add(mainPanel, BorderLayout.CENTER);
@@ -108,29 +106,27 @@ public class LoginFrame extends JFrame {
         //add login button
         JButton loginButton = new JButton("确定");
         loginButton.addActionListener(new
-                                              ActionListener()
-                                              {
-                                                  public void actionPerformed(ActionEvent e)
-                                                  {
+                                              ActionListener() {
+                                                  public void actionPerformed(ActionEvent e) {
                                                       loginUtil();
 
                                                       clientConfig.setLogin(1);
 
 
-                                                      if(clientConfig.getLogin() == 1) {
-                                                          if(selectedItem.equals("学生")) {
+                                                      if (clientConfig.getLogin() == 1) {
+                                                          if (selectedItem.equals("学生")) {
                                                               JFrame f = new MonitorFrame();
                                                               f.setVisible(true);
                                                               dispose();
                                                               MonitorFrame.monitorUtil(clientConfig);
-                                                              try{
+
+                                                              try {
                                                                   ((MonitorFrame) f).SendImage();
                                                               } catch (IOException ex) {
                                                                   throw new RuntimeException(ex);
                                                               }
-                                                          }
-                                                          else if(selectedItem.equals("教师"))
-                                                          {
+
+                                                          } else if (selectedItem.equals("教师")) {
                                                               ManageFrame f = new ManageFrame();
                                                               dispose();
                                                               ManageFrame.manageUtil(clientConfig);
@@ -143,17 +139,15 @@ public class LoginFrame extends JFrame {
         //add cancel button
         JButton cancelButton = new JButton("注册");
         cancelButton.addActionListener(new
-                                               ActionListener()
-                                               {
+                                               ActionListener() {
 
                                                    /**
                                                     * 注册逻辑
                                                     * @param e
                                                     */
-                                                   public void actionPerformed(ActionEvent e)
-                                                   {
+                                                   public void actionPerformed(ActionEvent e) {
                                                        try {
-                                                           registerUtil ();
+                                                           registerUtil();
                                                        } catch (Exception ex) {
                                                            ex.printStackTrace();
                                                        }
@@ -206,17 +200,16 @@ public class LoginFrame extends JFrame {
          * 或取身份信息
          */
         String role = "";
-        if(selectedItem.equals("学生")){
+        if (selectedItem.equals("学生")) {
             role = "0";
-        }
-        else if(selectedItem.equals("教师")){
+        } else if (selectedItem.equals("教师")) {
             role = "1";
         }
         String RegisterData = loginUsernameLen + loginUserName + loginPasswordLen + loginPassword + MACaddr + role;
-        Protocol.send(Protocol.TYPE_REGISTER,RegisterData.getBytes(),clientConfig.getDos());
+        Protocol.send(Protocol.TYPE_REGISTER, RegisterData.getBytes(), clientConfig.getDos());
     }
 
-    private static final int DEFAULT_WIDTH  = 300;
+    private static final int DEFAULT_WIDTH = 300;
     private static final int DEFAULT_HEIGHT = 200;
     private GridBagConstraints constraints;
     private JLabel label1, label2, label3;

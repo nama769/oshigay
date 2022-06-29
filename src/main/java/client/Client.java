@@ -1,5 +1,4 @@
 package client;
-
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -29,13 +28,13 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+
+
 
 import communication.Protocol;
 import communication.Result;
@@ -47,22 +46,24 @@ import static communication.Protocol.TYPE_CHANGE;
  */
 public class Client implements Runnable {
 
-	Socket socket;
+    Socket socket;
 
-	DataOutputStream dos = null;
-	DataInputStream dis=null;
+    DataOutputStream dos = null;
+    DataInputStream dis = null;
 
-	ClientConfig clientConfig;
-	Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+    ClientConfig clientConfig;
+    Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 
-	/**
-	 * ip
-	 * mac
-	 * username
-	 * role
-	 * int frequency
-	 * appList
-	 */
+    int exeNum = 0;
+
+    /**
+     * ip
+     * mac
+     * username
+     * role
+     * int frequency
+     * appList
+     */
 
     int width = (int) screensize.getWidth();
     int height = (int) screensize.getHeight();
@@ -192,19 +193,19 @@ public class Client implements Runnable {
         }
     }
 
-	/**
-	 * 处理服务端返回数据
-	 */
-	public void run() {
-		while(true){
+    /**
+     * 处理服务端返回数据
+     */
+    public void run() {
+        while (true) {
 
-		}
-	}
+        }
+    }
 
-	public void handleResult() {
-		while(isLive){
-			Result result = null;
-			result = Protocol.getResult(dis);
+    public void handleResult() {
+        while (isLive) {
+            Result result = null;
+            result = Protocol.getResult(dis);
 
             if (result != null)
                 handleType(result.getType(), result.getData());
@@ -219,35 +220,58 @@ public class Client implements Runnable {
      */
     private void handleType(int type, byte[] data) {
 
-		switch (type) {
-			case 1:
-				break;
-			case TYPE_CHANGE:
-				type_change(data);
-			case Protocol.TYPE_GRAPH:
-				GetFrequency(data);
-				break;
-			default:
-				break;
-		}
+        switch (type) {
+            case 1:
+                break;
+            case TYPE_CHANGE:
+                type_change(data);
+            case Protocol.TYPE_GRAPH:
+                GetFrequency(data);
+                break;
+            default:
+                break;
+        }
 
 
     }
-    private void GetFrequency(byte [] data){
-		byte fre=data[0];
-		clientConfig.setFrequency(fre);
-	}
 
-   private void type_change(byte[] data){
-	   byte frequency=data[0];
-	   if(frequency!=clientConfig.getFrequency()){
-		   clientConfig.setFrequency(frequency);
-	   }
-   }
+    private void GetFrequency(byte[] data) {
+        byte fre = data[0];
+        clientConfig.setFrequency(fre);
+    }
 
-
-
-
+    private void type_change(byte[] data) {
+        byte frequency = data[0];
+        if (frequency != clientConfig.getFrequency()) {
+            clientConfig.setFrequency(frequency);
+        }
+    }
+    public String[] exeMenu() throws IOException {
+        ProcessBuilder pb = new ProcessBuilder("tasklist");
+        Process p = pb.start();
+        BufferedReader out = new BufferedReader(new InputStreamReader(new BufferedInputStream(p.getInputStream()), Charset.forName("GB2312")));
+        String[] ostr=new String[1000];
+        for(this.exeNum=0;(out.readLine()) != null;this.exeNum++) {
+            ostr[this.exeNum] = out.readLine();
+            if(ostr[this.exeNum]!=null) {
+                ostr[this.exeNum] = ostr[this.exeNum].substring(0, ostr[this.exeNum].indexOf(' '));
+            }
+        }
+        return ostr;
+    }
+    public void searchBlackMenu() throws IOException {
+        String[] exeList=this.exeMenu();
+        String[] blackList= clientConfig.getBlackList();
+        for (int i=0;i<this.exeNum;i++){
+            for(int j=0;j< clientConfig.getBlacklistNumber();j++) {
+                if (exeList[i] != null) {
+                    if (exeList[i].contentEquals(blackList[j])) {
+                        JOptionPane.showMessageDialog(null, "您的操作以违反考试规定", "warning", 1);
+                    }
+                }
+            }
+        }
+    }
 //	public static void main(String[] args) {
 //		final Client client = new Client();
 //		client.showSystemTray();// 显示托盘

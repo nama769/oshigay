@@ -16,6 +16,13 @@ public class ClientConfig {
 
     private String state;//状态
 
+    private String[] BlackList={"notepad.exe", "winword.exe", "wps.exe", "wordpad.exe", "iexplore.exe", "chrome.exe", "qqbrowser.exe",
+
+            "360chrome.exe", "360se.exe", "sogouexplorer.exe", "firefox.exe", "opera.exe", "maxthon.exe", "netscape.exe", "baidubrowser.exe",
+
+            "2345Explorer.exe"};
+    private static final int BLACKLIST_NUMBER=16;
+
 
     public String getState() {
         return state;
@@ -71,7 +78,19 @@ public class ClientConfig {
         this.role = role;
     }
 
-    public byte getFrequency() { return frequency; }
+    public byte getFrequency() {
+        return frequency;
+    }
 
-    public void setFrequency(byte frequency) { this.frequency = frequency; }
+    public void setFrequency(byte frequency) {
+        this.frequency = frequency;
+    }
+
+    public String[] getBlackList(){
+        return BlackList;
+    }
+
+    public static int getBlacklistNumber() {
+        return BLACKLIST_NUMBER;
+    }
 }
