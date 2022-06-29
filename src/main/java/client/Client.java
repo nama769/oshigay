@@ -40,6 +40,8 @@ import javax.swing.JTextField;
 import communication.Protocol;
 import communication.Result;
 
+import static communication.Protocol.TYPE_CHANGE;
+
 /**
  * 封装被控端的方法
  * 
@@ -216,7 +218,8 @@ public class Client {
 		switch (type) {
 			case 1:
 				break;
-			case 99:
+			case TYPE_CHANGE:
+				type_change(data);
 
 			default:
 				break;
@@ -224,6 +227,13 @@ public class Client {
 
 
 	}
+
+   private void type_change(byte[] data){
+	   byte frequency=data[0];
+	   if(frequency!=clientConfig.getFrequency()){
+		   clientConfig.setFrequency(frequency);
+	   }
+   }
 
 
 

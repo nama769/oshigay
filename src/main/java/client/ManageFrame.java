@@ -1,6 +1,7 @@
 package client;
 
 
+import communication.Protocol;
 import server.DrawPanel;
 import server.Server;
 
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes.Name;
 
+import javax.print.attribute.standard.PDLOverrideSupported;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -117,11 +119,18 @@ public class ManageFrame {
      */
     public static void manageUtil(){
         while(true){
-
+           CHANGE();
         }
 
     }
 
+    private static void CHANGE(){
+        ClientConfig clientConfig= new ClientConfig();
+        byte managefrequency=2; /**这里的2应该为通过监听获取的教师端输入的截屏频率*/
+        byte[] bytes=new byte[0];
+        bytes[0]=managefrequency;
+        Protocol.send(101,bytes, clientConfig.getDos());
+    }
 
 
 

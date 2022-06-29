@@ -261,6 +261,7 @@ public class HandleClient implements Runnable{
 		databaseTool.findImageID(m);
 	}
 
+
 	private void sendMessage(String message){
 		Protocol.send(Protocol.TYPE_RETURN_MESSAGE,message.getBytes(StandardCharsets.UTF_8),dos);
 	}

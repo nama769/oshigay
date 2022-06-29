@@ -7,6 +7,7 @@ import java.net.Socket;
 public class ClientConfig {
     private int login;
     private int role;
+    private byte frequency;
 
     private Socket socket;
 
@@ -40,6 +41,7 @@ public class ClientConfig {
     public ClientConfig() {
         this.login = 0;
         this.role = 0;
+        this.frequency = 2;
     }
 
     public int getLogin() {
@@ -57,4 +59,8 @@ public class ClientConfig {
     public void setRole(int role) {
         this.role = role;
     }
+
+    public byte getFrequency() { return frequency; }
+
+    public void setFrequency(byte frequency) { this.frequency = frequency; }
 }
