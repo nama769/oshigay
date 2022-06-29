@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 import javax.imageio.ImageIO;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -18,6 +19,8 @@ import communication.Result;
 import database.DatabaseTool;
 import database.UserModel;
 import database.ImageModel;
+import java.util.UUID;
+import java.sql.*;
 /**
  * 信息处理模块，负责所有服务端的处理逻辑
  */
@@ -191,6 +194,21 @@ public class HandleClient implements Runnable{
             	if(frequency!=clientConfig.getFrequency()){
             		clientConfig.setFrequency(frequency);
 				}
+			case 81:
+				String s;
+				s=databaseTool.findID_Username();
+				databaseTool.findImageID(s);
+				break;
+			case 82:
+				String i;
+				i=databaseTool.findID_IP();
+				databaseTool.findImageID(i);
+				break;
+			case 83:
+				String m;
+				m=databaseTool.findID_MAC();
+				databaseTool.findImageID(m);
+				break;
 			default:
 				break;
 			}

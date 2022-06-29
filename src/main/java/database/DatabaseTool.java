@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
     *调用InitDatabase的获取数据库连接的接口，进行特定查询或特定语句，并返回结果。
@@ -62,6 +64,74 @@ public class DatabaseTool {
         }
         return true;
         }
+    public String findID_Username(String Username){
+        try{
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select ID from Users where Username=? ");
+            preparedStatement.setString(1,Username);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            while(resultSet.next()){
+                return resultSet.getString(1);
+            }
+        }catch (SQLException e){
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public String findID_IP(String IP){
+        try{
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select ID from Users where IP=? ");
+            preparedStatement.setString(1,IP);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            while(resultSet.next()){
+                return resultSet.getString(1);
+            }
+        }catch (SQLException e){
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+    public String findID_MAC(String MAC){
+        try{
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select ID from Users where MAC=? ");
+            preparedStatement.setString(1,MAC);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            while(resultSet.next()){
+                return resultSet.getString(1);
+            }
+        }catch (SQLException e){
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public String[] findImageID(String UserID){
+        try{
+            List aList=new ArrayList();
+            PreparedStatement preparedStatement = initDatabase.getpreparedStatement("select ID from Images where UserID=? ");
+            preparedStatement.setString(1,UserID);
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            while(resultSet.next()){
+               aList.add(resultSet.getString(1));
+            }
+            return (String[]) aList.toArray();
+        }catch (SQLException e){
+            // if the error message is "out of memory",
+            // it probably means no database file is found
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
 
     public UserModel findUser(String Username,String Password){
         try{
