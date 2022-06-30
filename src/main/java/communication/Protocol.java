@@ -36,6 +36,23 @@ public class Protocol {
      * 老刘 81 -100
      * 老大 101 -120
      */
+	public static final int TYPE_STUDENT_VIOLATE_SERVER = 10;//向服务端报告同学违规
+	public static final int TYPE_STUDENT_DOWN_SERVER = 11;//向服务端报告同学下线
+
+	public static final int TYPE_STUDENT_VIOLATE = 12;//服务端向老师报告同学违规
+	public static final int TYPE_STUDENT_DOWN = 13;//服务端向老师报告有同学下线
+
+	public static final int TYPE_CHANGE_BLACK_LIST = 14;//老师端向学生端更新黑名单
+	public static final int TYPE_SEND_BLACK_LIST_TO_CLIENT = 15;//老师端向学生端更新黑名单
+	/**
+	 * 老张 1-20
+	 * 老郭 21-40
+	 * 老杨 41-60
+	 * 老蒋 61 -80
+	 * 老刘 81 -100
+	 * 老大 101 -120
+	 *
+	 */
 
 
     public static final int TYPE_RETURN_MESSAGE = 5;//消息回应

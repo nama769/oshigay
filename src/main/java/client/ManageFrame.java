@@ -42,6 +42,8 @@ public class ManageFrame {
     public static JTextField findUsernameTextField;
     public static JTextField findMACTextField;
     public static JTextField findIPTextField;
+
+    public static JTextField findBlackListTextField;
     public static JLabel frequencyLabel;
 
     //以下必须为静态的，否则在HandleClient里访问不到
@@ -148,6 +150,15 @@ public class ManageFrame {
         findIPTextField.setPreferredSize(new Dimension(120, 25));
         myPanel.add(findIPTextField, constraints);
 
+
+        JLabel findLabel5 = new JLabel("黑名单设置");
+        myPanel.add(findLabel5, constraints);
+
+        findBlackListTextField = new JTextField();
+        findBlackListTextField.setPreferredSize(new Dimension(120, 25));
+        myPanel.add(findBlackListTextField, constraints);
+
+
         JButton myButton = new JButton("确定");
         myButton.addActionListener(new
                                            ActionListener()
@@ -188,6 +199,11 @@ public class ManageFrame {
         Protocol.send(TYPE_CHANGE,new byte[]{(byte) Integer.parseInt(managefrequency)}, clientConfig.getDos());
     }
 
+    private void changeBlackList(String blackListString){
+        clientConfig.setBlackList(blackListString.split(" "));
+        Protocol.send(TYPE_CHANGE_BLACK_LIST,blackListString.getBytes(StandardCharsets.UTF_8), clientConfig.getDos());
+    }
+
     private void showImageList(){
         clientConfig.setFocusImageType(null);
         for(String i:clientConfig.getImageIDsSearchList()){
@@ -205,6 +221,7 @@ public class ManageFrame {
         String findUsername =  findUsernameTextField.getText();
         String findMAC =  findMACTextField.getText();
         String findIP = findIPTextField.getText();
+        String blackListText =  findBlackListTextField.getText();
         if(!frequency.equals("")){
             /**
              * 更改频率
@@ -214,6 +231,7 @@ public class ManageFrame {
             /**
              * 按用户名查找
              */
+
             sendUsername(findUsername);
         }else if(!findMAC.equals("")){
             /**
@@ -225,6 +243,11 @@ public class ManageFrame {
              * 按IP查找
              */
             sendIP(findIP);
+        }else if(!blackListText.equals("")){
+            /**
+             * 改变黑名单
+             */
+            changeBlackList(blackListText);
         }
 
     }

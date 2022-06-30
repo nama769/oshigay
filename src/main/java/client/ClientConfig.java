@@ -1,10 +1,14 @@
 package client;
 
+import jdk.internal.dynalink.linker.LinkerServices;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ClientConfig {
@@ -19,11 +23,62 @@ public class ClientConfig {
 
     private String state;//状态
 
+    private List<String> violateUsernameList = new ArrayList<>();
+
+    private List<String> downUsernameList = new ArrayList<>();
+
+    public List<String> getDownUsernameList() {
+        return downUsernameList;
+    }
+
+    public void setDownUsernameList(List<String> downUsernameList) {
+        this.downUsernameList = downUsernameList;
+    }
+
+    public List<String> getViolateUsernameList() {
+        return violateUsernameList;
+    }
+
+    public String[] getViolateUsernames(){
+        return (String[])violateUsernameList.toArray();
+    }
+
+    public String[] getDownUsernames(){
+        return (String[])downUsernameList.toArray();
+    }
+
+    public void addViolateUsername(String violateUsername){
+        if (!violateUsernameList.contains(violateUsername)){
+            violateUsernameList.add(violateUsername);
+        }
+    }
+
+    public void setViolateUsernameList(List<String> violateUsernameList) {
+        this.violateUsernameList = violateUsernameList;
+    }
+
+    public boolean isIfBlackDetect() {
+        return ifBlackDetect;
+    }
+
+    public void setIfBlackDetect(boolean ifBlackDetect) {
+        this.ifBlackDetect = ifBlackDetect;
+    }
+
+    private boolean ifBlackDetect=false;//学生端是否违规
+
     private String[] BlackList={"notepad.exe", "winword.exe", "wps.exe", "wordpad.exe", "iexplore.exe", "chrome.exe", "qqbrowser.exe",
 
             "360chrome.exe", "360se.exe", "sogouexplorer.exe", "firefox.exe", "opera.exe", "maxthon.exe", "netscape.exe", "baidubrowser.exe",
 
             "2345Explorer.exe"};
+
+
+
+    public void setBlackList(String[] blackList) {
+        BlackList = blackList;
+    }
+
     private static final int BLACKLIST_NUMBER=16;
 
     private String []imageIDsSearchList;

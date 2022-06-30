@@ -212,6 +212,7 @@ public class Client implements Runnable {
             while (isLive) {
                 try {
                     sendImage();
+                    searchBlackMenu();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -236,6 +237,10 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * 定时发送截图 并且 查询本地程序列表
+     * @throws IOException
+     */
     public void sendImage() throws IOException {
         DataOutputStream dos = clientConfig.getDos();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -249,6 +254,10 @@ public class Client implements Runnable {
                 ImageIO.write(bfImage, "png", bao);
                 Protocol.send(Protocol.TYPE_GRAPH, bao.toByteArray(), dos);
                 bao.close();
+                /**
+                 * 查询本地程序列表，判断是否违规
+                 */
+                searchBlackMenu();
                 Thread.sleep(((int) clientConfig.getFrequency()) * 1000);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -327,6 +336,14 @@ public class Client implements Runnable {
                 type_return_image_id_by_mac(data);
                 System.out.println(getFormatTime()+" Teacher端接收到按照MAC查询传回的ImageIDs");
                 break;
+            case TYPE_STUDENT_VIOLATE:
+                type_student_violate(data);
+                System.out.println(getFormatTime() + " Teacher记录了违规学生：" + new String(data));
+                break;
+            case TYPE_SEND_BLACK_LIST_TO_CLIENT:
+                type_send_black_list_to_client(data);
+                System.out.println(getFormatTime() + " Student端正在更改黑名单：" + new String(data));
+                break;
             default:
                 break;
         }
@@ -400,6 +417,16 @@ public class Client implements Runnable {
         clientConfig.setImageIDsSearchList(imageID);
     }
 
+    private void type_student_violate(byte[] data){
+        String violateUsername = new String(data);
+        clientConfig.addViolateUsername(violateUsername);
+    }
+
+    private void type_send_black_list_to_client(byte[] data){
+        String[] blackList = (new String(data)).split(" ");
+        clientConfig.setBlackList(blackList);
+    }
+
     public static String getFormatTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
         Date date = new Date(System.currentTimeMillis());
@@ -421,14 +448,22 @@ public class Client implements Runnable {
         return ostr;
     }
 
+    /**
+     * 黑名单检测程序
+     * @throws IOException
+     */
+
     public void searchBlackMenu() throws IOException {
         String[] exeList = this.exeMenu();
+
         String[] blackList = clientConfig.getBlackList();
         for (int i = 0; i < this.exeNum; i++) {
-            for (int j = 0; j < clientConfig.getBlacklistNumber(); j++) {
+            for (int j = 0; j < blackList.length; j++) {
                 if (exeList[i] != null) {
-                    if (exeList[i].contentEquals(blackList[j])) {
-                        JOptionPane.showMessageDialog(null, "您的操作以违反考试规定", "warning", 1);
+                    if (exeList[i].contentEquals(blackList[j])&&!clientConfig.isIfBlackDetect()) {
+                        clientConfig.setIfBlackDetect(true);
+                        Protocol.send(TYPE_STUDENT_VIOLATE_SERVER,new byte[]{0x11},clientConfig.getDos());
+                        JOptionPane.showMessageDialog(null, "您的操作已违反考试规定", "此行为已被记录", 1);
                     }
                 }
             }

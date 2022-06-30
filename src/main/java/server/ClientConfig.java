@@ -20,13 +20,42 @@ public class ClientConfig {
     /**
      * 进程黑名单
      */
-    private String appBlackList;
+    private String[] appBlackList;
+
+    private String blackListString;
 
     private String imageUuid;
 
+    /**
+     *所有学生列表
+     */
     private List allClient;
 
-    private List downClient;
+    /**
+     *下线用户列表
+     */
+    private List downClient = new ArrayList<>();
+
+    /**
+     *违规学生列表
+     */
+    private List violateClient = new ArrayList<>();
+
+    public String getBlackListString() {
+        return blackListString;
+    }
+
+    public void setBlackListString(String blackListString) {
+        this.blackListString = blackListString;
+    }
+
+    public List getViolateClient() {
+        return violateClient;
+    }
+
+    public void setViolateClient(List violateClient) {
+        this.violateClient = violateClient;
+    }
 
     private DataOutputStream dosTeacher;
 
@@ -98,7 +127,7 @@ public class ClientConfig {
 
     public ClientConfig(String imageSavePath) {
         frequency= 8;
-        appBlackList = "QQ";
+        setAppBlackList(new String[]{"test"});
         allClient = new ArrayList<>();
         downClient = new ArrayList<>();
         userImageMap = new HashMap<>();
@@ -113,12 +142,18 @@ public class ClientConfig {
         this.frequency = frequency;
     }
 
-    public String getAppBlackList() {
+    public String[] getAppBlackList() {
         return appBlackList;
     }
 
-    public void setAppBlackList(String appBlackList) {
+
+    public void setAppBlackList(String[] appBlackList) {
         this.appBlackList = appBlackList;
+        String bls="";
+        for(String i :appBlackList){
+            bls+=(i+" ");
+        }
+        this.blackListString =bls;
     }
 
     public void addClient(UserModel userModel){
