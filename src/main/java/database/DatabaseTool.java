@@ -124,7 +124,7 @@ public class DatabaseTool {
             while(resultSet.next()){
                aList.add(resultSet.getString(1));
             }
-            return (String[]) aList.toArray();
+            return (String[]) aList.toArray(new String[aList.size()]);
         }catch (SQLException e){
             // if the error message is "out of memory",
             // it probably means no database file is found

@@ -165,7 +165,7 @@ public class LoginFrame extends JFrame {
     /**
      * 登录逻辑
      */
-    private void loginUtil()  {
+    private void loginUtil(){
         String loginQuery;
         String loginUserName = myTextField.getText();
         String loginPassword = new String(passwordField.getPassword());

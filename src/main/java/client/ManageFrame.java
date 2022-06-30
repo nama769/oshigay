@@ -11,10 +11,9 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.jar.Attributes.Name;
 
 import javax.swing.*;
@@ -206,18 +205,6 @@ public class ManageFrame {
         Protocol.send(TYPE_CHANGE_BLACK_LIST,blackListString.getBytes(StandardCharsets.UTF_8), clientConfig.getDos());
     }
 
-    private void showImageList(){
-        clientConfig.setFocusImageType(null);
-        for(String i:clientConfig.getImageIDsSearchList()){
-            Protocol.send(TYPE_LOAD_IMAGE,i.getBytes(StandardCharsets.UTF_8),clientConfig.getDos());
-            try {
-                Thread.sleep(((int)clientConfig.getFrequency())*1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     public void buttonUtil(){
         String frequency =  frequencyTextField.getText();
         String findUsername =  findUsernameTextField.getText();
@@ -329,6 +316,12 @@ public class ManageFrame {
 
     public static void clear(){
         list.clear();
+    }
+
+    public static String getFormatTime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        Date date = new Date(System.currentTimeMillis());
+        return formatter.format(date);
     }
 
 }

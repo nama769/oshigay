@@ -343,8 +343,8 @@ public class HandleClient implements Runnable {
 	}
 
 	private void type_load_image(byte[] data) {
+		String imageid = new String(data);
 		try {
-			String imageid = new String(data);
 			ByteArrayOutputStream bao = new ByteArrayOutputStream();
 			File image = new File(clientConfig.getImageSavePath() + imageid + ".jpg");
 			BufferedImage bfImage = (BufferedImage) ImageIO.read(image);
@@ -352,7 +352,7 @@ public class HandleClient implements Runnable {
 			Protocol.send(TYPE_RET_IMAGE, bao.toByteArray(), dos);
 			bao.close();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			System.out.println(getFormatTime()+"加载图像失败："+imageid);
 		}
 
 	}

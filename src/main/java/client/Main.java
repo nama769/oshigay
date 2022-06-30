@@ -8,7 +8,7 @@ public class Main {
         ClientConfig clientconfig = new ClientConfig();
         Client client = new Client(clientconfig);
 //        client.showSystemTray();// 显示托盘
-        String serverIP ="26.26.26.1";
+        String serverIP ="192.168.247.1";
 //        serverIP ="123.57.193.197";
         if(args.length==1){
             serverIP = args[0];

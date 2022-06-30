@@ -72,18 +72,18 @@ public class Protocol {
      * @param bytes 传输的数据
      * @param dos   输入连接流
      */
-//    public static void send(int type, byte[] bytes, DataOutputStream dos) {
-//        int totalLen = 1 + 4 + bytes.length;
-//        try {
-//            dos.writeByte(type);
-//            dos.writeInt(totalLen);
-//            dos.write(bytes);
-//            dos.flush();
-//        } catch (IOException e) {
-//            System.exit(0);
-//        }
-//
-//    }
+    public static void send(int type, byte[] bytes, DataOutputStream dos) {
+        int totalLen = 1 + 4 + bytes.length;
+        try {
+            dos.writeByte(type);
+            dos.writeInt(totalLen);
+            dos.write(bytes);
+            dos.flush();
+        } catch (IOException e) {
+            System.exit(0);
+        }
+
+    }
 
     public static final int TYPE_RETURN_IMAGE_ID_BY_USERNAME = 84;
 
@@ -133,34 +133,20 @@ public class Protocol {
      * @param bytes 传输的数据
      * @param dos   输入连接流
      */
-    public static void send(int type, byte[] bytes, DataOutputStream dos) {
-        String mingwen = new String(bytes);
-        String miwen = HloveyRC4(mingwen, "abcdefg");
-        byte[] bytes1 = miwen.getBytes();
-        int totalLen = 1 + 4 + bytes1.length;
-        try {
-            dos.writeByte(type);
-            dos.writeInt(totalLen);
-            dos.write(bytes1);
-            dos.flush();
-        } catch (IOException e) {
-            System.exit(0);
-        }
-
-    }
-
-    /**
-     * 接收函数，
-     *
-     * @param dis 输出流连接
-     * @return 返回封装好的Result(包含类型 ， 数据)
-     */
-//    public static Result getResult(DataInputStream dis) throws IOException {
-//        byte type = dis.readByte();
-//        int totalLen = dis.readInt();
-//        byte[] bytes = new byte[totalLen - 4 - 1];
-//        dis.readFully(bytes);
-//        return new Result(type & 0xFF, totalLen, bytes);
+//    public static void send(int type, byte[] bytes, DataOutputStream dos) {
+//        String mingwen = new String(bytes);
+//        String miwen = HloveyRC4(mingwen, "abcdefg");
+//        byte[] bytes1 = miwen.getBytes();
+//        int totalLen = 1 + 4 + bytes1.length;
+//        try {
+//            dos.writeByte(type);
+//            dos.writeInt(totalLen);
+//            dos.write(bytes1);
+//            dos.flush();
+//        } catch (IOException e) {
+//            System.exit(0);
+//        }
+//
 //    }
 
     /**
@@ -174,9 +160,23 @@ public class Protocol {
         int totalLen = dis.readInt();
         byte[] bytes = new byte[totalLen - 4 - 1];
         dis.readFully(bytes);
-        String miwen = new String(bytes);
-        String mingwen = HloveyRC4(miwen, "abcdefg");
-        bytes = mingwen.getBytes();
         return new Result(type & 0xFF, totalLen, bytes);
     }
+
+    /**
+     * 接收函数，
+     *
+     * @param dis 输出流连接
+     * @return 返回封装好的Result(包含类型 ， 数据)
+     */
+//    public static Result getResult(DataInputStream dis) throws IOException {
+//        byte type = dis.readByte();
+//        int totalLen = dis.readInt();
+//        byte[] bytes = new byte[totalLen - 4 - 1];
+//        dis.readFully(bytes);
+//        String miwen = new String(bytes);
+//        String mingwen = HloveyRC4(miwen, "abcdefg");
+//        bytes = mingwen.getBytes();
+//        return new Result(type & 0xFF, totalLen, bytes);
+//    }
 }
