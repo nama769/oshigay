@@ -55,6 +55,81 @@ public class Protocol {
 
 	public static final int TYPE_RETURN_IMAGE_ID_BY_MAC=86;
 
+	//RC4加解密算法
+	public static String HloveyRC4(String aInput,String aKey)
+
+	{
+
+		int[] iS = new int[256];
+
+		byte[] iK = new byte[256];
+
+		for (int i=0;i<256;i++)
+
+			iS[i]=i;
+
+		int j = 1;
+
+		for (short i= 0;i<256;i++)
+
+		{
+
+			iK[i]=(byte)aKey.charAt((i % aKey.length()));
+
+		}
+
+		j=0;
+
+		for (int i=0;i<255;i++)
+
+		{
+
+			j=(j+iS[i]+iK[i]) % 256;
+
+			int temp = iS[i];
+
+			iS[i]=iS[j];
+
+			iS[j]=temp;
+
+		}
+
+		int i=0;
+
+		j=0;
+
+		char[] iInputChar = aInput.toCharArray();
+
+		char[] iOutputChar = new char[iInputChar.length];
+
+		for(short x = 0;x<iInputChar.length;x++)
+
+		{
+
+			i = (i+1) % 256;
+
+			j = (j+iS[i]) % 256;
+
+			int temp = iS[i];
+
+			iS[i]=iS[j];
+
+			iS[j]=temp;
+
+			int t = (iS[i]+(iS[j] % 256)) % 256;
+
+			int iY = iS[t];
+
+			char iCY = (char)iY;
+
+			iOutputChar[x] =(char)( iInputChar[x] ^ iCY) ;
+
+		}
+
+		return new String(iOutputChar);
+
+	}
+
 	/**
 	 * 发送函数，
 	 * @param type 类型
@@ -62,6 +137,9 @@ public class Protocol {
 	 * @param dos 输入连接流
 	 */
 	public static void send(int type,byte[] bytes,DataOutputStream dos){
+		//String mingwen=new String(bytes);
+		//String miwen=HloveyRC4(mingwen,"abcdefg");
+		//bytes=miwen.getBytes();
 		int totalLen=1+4+bytes.length;
 			try {
 				dos.writeByte(type);
@@ -83,6 +161,9 @@ public class Protocol {
 		byte type = dis.readByte();
 		int totalLen=dis.readInt();
 		byte[] bytes=new byte[totalLen-4-1];
+		//String miwen=new String(bytes);
+		//String mingwen=HloveyRC4(miwen,"abcdefg");
+		//bytes=mingwen.getBytes();
 		dis.readFully(bytes);
 		return new Result(type&0xFF,totalLen,bytes);
 	}
