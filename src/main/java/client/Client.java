@@ -128,8 +128,7 @@ public class Client implements Runnable {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(buff, "png", baos);
-            if(clientConfig.getDos()!=null){
-            Protocol.send(Protocol.TYPE_IMAGE, baos.toByteArray(), dos);}
+            Protocol.send(Protocol.TYPE_IMAGE, baos.toByteArray(), dos);
             baos.close();
             System.out.println("send file successfully");
         } catch (IOException e) {
@@ -142,7 +141,6 @@ public class Client implements Runnable {
         //向服务器发送消息
         Protocol.send(Protocol.TYPE_LOGOUT, new String("logout").getBytes(), dos);
         // 关闭资源
-
         try {
             if (dos != null)
                 dos.close();
@@ -176,58 +174,56 @@ public class Client implements Runnable {
     /**
      * 显示系统托盘
      */
-//    public void showSystemTray() {
-//        Image image = Toolkit.getDefaultToolkit().getImage("img/icon.png");
-//        final TrayIcon trayIcon = new TrayIcon(image);// 创建托盘图标
-//        trayIcon.setToolTip("屏幕监控系统\r\n客户端");// 设置提示文字
-//        final SystemTray systemTray = SystemTray.getSystemTray();// 获得系统托盘对象
-//
-//        final PopupMenu popupMenu = new PopupMenu(); // 创建弹出菜单
-//        MenuItem item = new MenuItem("退出");
-//        item.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                isLive = false;
-//                close();
-//
-//            }
-//        });
-//        popupMenu.add(item);
-//        trayIcon.setPopupMenu(popupMenu);// 为托盘图标加弹出菜单
-//        try {
-//            systemTray.add(trayIcon);// 为系统托盘加托盘图标
-//        } catch (AWTException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void showSystemTray() {
+        Image image = Toolkit.getDefaultToolkit().getImage("img/icon.png");
+        final TrayIcon trayIcon = new TrayIcon(image);// 创建托盘图标
+        trayIcon.setToolTip("屏幕监控系统\r\n客户端");// 设置提示文字
+        final SystemTray systemTray = SystemTray.getSystemTray();// 获得系统托盘对象
 
-    /**
-     * 处理服务端返回数据
-     */
-    public void run() {
-        if (clientConfig.getRole() == 0) {
+        final PopupMenu popupMenu = new PopupMenu(); // 创建弹出菜单
+        MenuItem item = new MenuItem("退出");
+        item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isLive = false;
+                close();
+            }
+        });
+        popupMenu.add(item);
+        trayIcon.setPopupMenu(popupMenu);// 为托盘图标加弹出菜单
+        try {
+            systemTray.add(trayIcon);// 为系统托盘加托盘图标
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+    }
+
+	/**
+	 * 处理服务端返回数据
+	 */
+	public void run() {
+		if(clientConfig.getRole()==0){
             /**
              * 考生端
              */
-            while (isLive) {
+            while(isLive){
                 try {
                     sendImage();
-                    searchBlackMenu();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
-        } else {
+        }else {
             /**
              * 老师端
              */
-            while (isLive) {
-                if (clientConfig.getFocusImageType() != null) {
-                    Protocol.send(TYPE_GET_IMAGE, clientConfig.getFocusImageType().getBytes(StandardCharsets.UTF_8), clientConfig.getDos());
+            while(isLive){
+                if(clientConfig.getFocusImageType()!=null){
+                    Protocol.send(TYPE_GET_IMAGE,clientConfig.getFocusImageType().getBytes(StandardCharsets.UTF_8),clientConfig.getDos());
                 }
                 try {
-                    System.out.println(getFormatTime() + " Teacher端正在选中：" + clientConfig.getFocusImageType());
-                    Thread.sleep((int) clientConfig.getFrequency() * 1000);
+                    System.out.println(getFormatTime()+" Teacher端正在选中："+clientConfig.getFocusImageType());
+                    Thread.sleep((int)clientConfig.getFrequency()*1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -235,12 +231,8 @@ public class Client implements Runnable {
 
             }
         }
-    }
+	}
 
-    /**
-     * 定时发送截图 并且 查询本地程序列表
-     * @throws IOException
-     */
     public void sendImage() throws IOException {
         DataOutputStream dos = clientConfig.getDos();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -254,11 +246,7 @@ public class Client implements Runnable {
                 ImageIO.write(bfImage, "png", bao);
                 Protocol.send(Protocol.TYPE_GRAPH, bao.toByteArray(), dos);
                 bao.close();
-                /**
-                 * 查询本地程序列表，判断是否违规
-                 */
-                searchBlackMenu();
-                Thread.sleep(((int) clientConfig.getFrequency()) * 1000);
+                Thread.sleep(((int)clientConfig.getFrequency())*1000);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -267,21 +255,18 @@ public class Client implements Runnable {
         }
     }
 
-    public void handleResult() {
-        while (isLive) {
-            Result result = null;
+	public void handleResult() {
+		while(isLive){
+			Result result = null;
             try {
-                if(clientConfig.getDis()!=null) {
-                    result = Protocol.getResult(clientConfig.getDis());
-                }
+                result = Protocol.getResult(clientConfig.getDis());
 //                try {
 //                    Thread.sleep(1500);
 //                } catch (InterruptedException e) {
 //                    throw new RuntimeException(e);
 //                }
             } catch (IOException e) {
-                isLive=false;
-                System.out.println("已下线！！！");
+                throw new RuntimeException(e);
             }
 
             if (result != null)
@@ -297,56 +282,36 @@ public class Client implements Runnable {
      */
     private void handleType(int type, byte[] data) {
 
-        switch (type) {
-            case 1:
+		switch (type) {
+			case 1:
+				break;
+			case TYPE_CHANGE:
+				type_change(data);
+                System.out.println(getFormatTime()+" Student端正在更改监管频率："+(int)clientConfig.getFrequency());
                 break;
-            case TYPE_CHANGE:
-                type_change(data);
-                System.out.println(getFormatTime() + " Student端正在更改监管频率：" + (int) clientConfig.getFrequency());
-                break;
-            case TYPE_GRAPH:
-                GetFrequency(data);
-                System.out.println(getFormatTime() + " Student端正在更改监管频率：" + (int) clientConfig.getFrequency());
-                break;
+			case TYPE_GRAPH:
+				GetFrequency(data);
+                System.out.println(getFormatTime()+" Student端正在更改监管频率："+(int)clientConfig.getFrequency());
+				break;
             case TYPE_LOGIN_REPAY:
                 type_login(data);
-                System.out.println(getFormatTime() + " 登录成功");
+                System.out.println(getFormatTime()+" 登录成功");
                 break;
             case TYPE_STUDENT_UP:
                 type_student_up(data);
-                System.out.println(getFormatTime() + " Teacher端接收到新Student：" + new String(data));
+                System.out.println(getFormatTime()+" Teacher端接收到新Student："+new String(data));
                 break;
             case TYPE_RET_SELECT_IMAGEID:
                 type_get_select_imageid(data);
-                System.out.println(getFormatTime() + " Teacher端接收到最新ImageID：" + new String(data));
+                System.out.println(getFormatTime()+" Teacher端接收到最新ImageID："+new String(data));
                 break;
             case TYPE_RET_IMAGE:
                 type_ret_image(data);
-                System.out.println(getFormatTime() + " Teacher端接收到最新Image");
+                System.out.println(getFormatTime()+" Teacher端接收到最新Image");
                 break;
-            case TYPE_RETURN_IMAGE_ID_BY_USERNAME:
-                type_return_image_id_by_username(data);
-                System.out.println(getFormatTime()+" Teacher端接收到按照Username查询传回的ImageIDs");
-                break;
-            case TYPE_RETURN_IMAGE_ID_BY_IP:
-                type_return_image_id_by_ip(data);
-                System.out.println(getFormatTime()+" Teacher端接收到按照IP查询传回的ImageIDs");
-                break;
-            case TYPE_RETURN_IMAGE_ID_BY_MAC:
-                type_return_image_id_by_mac(data);
-                System.out.println(getFormatTime()+" Teacher端接收到按照MAC查询传回的ImageIDs");
-                break;
-            case TYPE_STUDENT_VIOLATE:
-                type_student_violate(data);
-                System.out.println(getFormatTime() + " Teacher记录了违规学生：" + new String(data));
-                break;
-            case TYPE_SEND_BLACK_LIST_TO_CLIENT:
-                type_send_black_list_to_client(data);
-                System.out.println(getFormatTime() + " Student端正在更改黑名单：" + new String(data));
-                break;
-            default:
-                break;
-        }
+			default:
+				break;
+		}
 
 
     }
@@ -356,39 +321,39 @@ public class Client implements Runnable {
         clientConfig.setFrequency(fre);
     }
 
-    private void type_change(byte[] data) {
-        byte frequency = data[0];
-        if (frequency != clientConfig.getFrequency()) {
-            clientConfig.setFrequency(frequency);
-        }
-    }
+   private void type_change(byte[] data){
+	   byte frequency=data[0];
+	   if(frequency!=clientConfig.getFrequency()){
+		   clientConfig.setFrequency(frequency);
+	   }
+   }
 
-    private void type_login(byte[] data) {
+   private void type_login(byte[] data){
         String msg = new String(data);
-        if (msg.split("\n")[0].equals("Login successfully!")) {
+        if(msg.split("\n")[0].equals("Login successfully!")){
             clientConfig.setState(UserModel.STATE_LOGIN);
             clientConfig.setLogin(1);
             clientConfig.setRole(Integer.parseInt(msg.split("\n")[1]));
-        } else {
+        }else {
             clientConfig.setState(UserModel.STATE_LOGIN_FAIL);
         }
-    }
+   }
 
-    private void type_student_up(byte[] data) {
+   private void type_student_up(byte[] data){
         String username = new String(data);
 //        clientConfig.;
         ManageFrame.setTreeNode(ManageFrame.addValue(username));
-        if (ManageFrame.curKey == null) ManageFrame.curKey = username;
+        if(ManageFrame.curKey==null) ManageFrame.curKey=username;
     }
 
-    private void type_get_select_imageid(byte[] data) {
+    private void type_get_select_imageid(byte[] data){
         String imageid = new String(data);
-        Protocol.send(TYPE_LOAD_IMAGE, imageid.getBytes(StandardCharsets.UTF_8), dos);
+        Protocol.send(TYPE_LOAD_IMAGE,imageid.getBytes(StandardCharsets.UTF_8),dos);
     }
 
-    private void type_ret_image(byte[] data) {
-        ByteArrayInputStream bai = new ByteArrayInputStream(data);
-        BufferedImage buff = null;
+    private void type_ret_image(byte[] data){
+        ByteArrayInputStream bai=new ByteArrayInputStream(data);
+        BufferedImage buff= null;
         try {
             buff = ImageIO.read(bai);
             ManageFrame.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
@@ -399,71 +364,37 @@ public class Client implements Runnable {
         }
     }
 
-    private void type_return_image_id_by_username(byte[] data){
-        String imageIDs=new String(data);
-        String []imageID=imageIDs.split("\n");
-        clientConfig.setImageIDsSearchList(imageID);
-    }
-
-    private void type_return_image_id_by_ip(byte[] data){
-        String imageIDs=new String(data);
-        String []imageID=imageIDs.split("\n");
-        clientConfig.setImageIDsSearchList(imageID);
-    }
-
-    private void type_return_image_id_by_mac(byte[] data) {
-        String imageIDs=new String(data);
-        String []imageID=imageIDs.split("\n");
-        clientConfig.setImageIDsSearchList(imageID);
-    }
-
-    private void type_student_violate(byte[] data){
-        String violateUsername = new String(data);
-        clientConfig.addViolateUsername(violateUsername);
-    }
-
-    private void type_send_black_list_to_client(byte[] data){
-        String[] blackList = (new String(data)).split(" ");
-        clientConfig.setBlackList(blackList);
-    }
-
-    public static String getFormatTime() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+    public static String getFormatTime(){
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
         Date date = new Date(System.currentTimeMillis());
         return formatter.format(date);
     }
+
+
+
 
 
     public String[] exeMenu() throws IOException {
         ProcessBuilder pb = new ProcessBuilder("tasklist");
         Process p = pb.start();
         BufferedReader out = new BufferedReader(new InputStreamReader(new BufferedInputStream(p.getInputStream()), Charset.forName("GB2312")));
-        String[] ostr = new String[1000];
-        for (this.exeNum = 0; (out.readLine()) != null; this.exeNum++) {
+        String[] ostr=new String[1000];
+        for(this.exeNum=0;(out.readLine()) != null;this.exeNum++) {
             ostr[this.exeNum] = out.readLine();
-            if (ostr[this.exeNum] != null) {
+            if(ostr[this.exeNum]!=null) {
                 ostr[this.exeNum] = ostr[this.exeNum].substring(0, ostr[this.exeNum].indexOf(' '));
             }
         }
         return ostr;
     }
-
-    /**
-     * 黑名单检测程序
-     * @throws IOException
-     */
-
     public void searchBlackMenu() throws IOException {
-        String[] exeList = this.exeMenu();
-
-        String[] blackList = clientConfig.getBlackList();
-        for (int i = 0; i < this.exeNum; i++) {
-            for (int j = 0; j < blackList.length; j++) {
+        String[] exeList=this.exeMenu();
+        String[] blackList= clientConfig.getBlackList();
+        for (int i=0;i<this.exeNum;i++){
+            for(int j=0;j< clientConfig.getBlacklistNumber();j++) {
                 if (exeList[i] != null) {
-                    if (exeList[i].contentEquals(blackList[j])&&!clientConfig.isIfBlackDetect()) {
-                        clientConfig.setIfBlackDetect(true);
-                        Protocol.send(TYPE_STUDENT_VIOLATE_SERVER,new byte[]{0x11},clientConfig.getDos());
-                        JOptionPane.showMessageDialog(null, "您的操作已违反考试规定", "此行为已被记录", 1);
+                    if (exeList[i].contentEquals(blackList[j])) {
+                        JOptionPane.showMessageDialog(null, "您的操作以违反考试规定", "warning", 1);
                     }
                 }
             }
