@@ -288,21 +288,39 @@ public class HandleClient implements Runnable{
 	private void type_find_image_by_username(byte[] data){
 		String message = new String(data);
 		String s;
+		String []imageIds;
+		String result="";
 		s=databaseTool.findID_Username(message);
-		databaseTool.findImageID(s);
+		imageIds=databaseTool.findImageID(s);
+		for(String i:imageIds){
+			result+=(i+"\n");
+		}
+		Protocol.send(Protocol.TYPE_RETURN_IMAGE_ID_BY_USERNAME,result.getBytes(StandardCharsets.UTF_8),dos);
 	}
 
 	private void type_find_image_by_ip(byte[] data){
 		String message = new String(data);
 		String i;
+		String []imageIds;
+		String result="";
 		i=databaseTool.findID_IP(message);
-		databaseTool.findImageID(i);
+		imageIds=databaseTool.findImageID(i);
+		for(String j:imageIds){
+			result+=(j+"\n");
+		}
+		Protocol.send(Protocol.TYPE_RETURN_IMAGE_ID_BY_IP,result.getBytes(StandardCharsets.UTF_8),dos);
 	}
 	private void type_find_image_by_mac(byte[] data){
 		String message = new String(data);
 		String m;
+		String []imageIds;
+		String result="";
 		m=databaseTool.findID_MAC(message);
-		databaseTool.findImageID(m);
+		imageIds=databaseTool.findImageID(m);
+		for(String i:imageIds){
+			result+=(i+"\n");
+		}
+		Protocol.send(Protocol.TYPE_RETURN_IMAGE_ID_BY_MAC,result.getBytes(StandardCharsets.UTF_8),dos);
 	}
 
 	private String type_get_image(byte[] data){

@@ -5,7 +5,9 @@ import communication.Protocol;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class ManageFrame {
     public static JTextField frequencyTextField;
     public static JTextField findUsernameTextField;
     public static JTextField findMACTextField;
+    public static JTextField findIPTextField;
     public static JLabel frequencyLabel;
 
     //以下必须为静态的，否则在HandleClient里访问不到
@@ -124,14 +127,12 @@ public class ManageFrame {
         frequencyTextField.setPreferredSize(new Dimension(120, 25));
         myPanel.add(frequencyTextField, constraints);
 
-
         JLabel findLabel2 = new JLabel("用户名查找");
         myPanel.add(findLabel2, constraints);
 
         findUsernameTextField = new JTextField();
         findUsernameTextField.setPreferredSize(new Dimension(120, 25));
         myPanel.add(findUsernameTextField, constraints);
-
 
         JLabel findLabel3 = new JLabel("MAC查找");
         myPanel.add(findLabel3, constraints);
@@ -140,18 +141,39 @@ public class ManageFrame {
         findMACTextField.setPreferredSize(new Dimension(120, 25));
         myPanel.add(findMACTextField, constraints);
 
+        JLabel findLabel4 = new JLabel("IP查找");
+        myPanel.add(findLabel4, constraints);
+
+        findIPTextField = new JTextField();
+        findIPTextField.setPreferredSize(new Dimension(120, 25));
+        myPanel.add(findIPTextField, constraints);
+
         JButton myButton = new JButton("确定");
         myButton.addActionListener(new
-                                                  ActionListener()
-                                                  {
-                                                      public void actionPerformed(ActionEvent e)
-                                                      {
-                                                          buttonUtil();
-                                                      }
-                                                  });
+                                           ActionListener()
+                                           {
+                                               public void actionPerformed(ActionEvent e)
+                                               {
+                                                   buttonUtil();
+                                               }
+                                           });
         myPanel.add(myButton);
 
         container.add(myPanel, BorderLayout.EAST);
+
+    }
+
+
+    private  void sendUsername(String username) {
+        Protocol.send(Protocol.TYPE_FIND_IMAGE_BY_USERNAME,username.getBytes(StandardCharsets.UTF_8),clientConfig.getDos());
+    }
+
+    private  void sendIP(String ip) {
+        Protocol.send(Protocol.TYPE_FIND_IMAGE_BY_IP,ip.getBytes(StandardCharsets.UTF_8),clientConfig.getDos());
+    }
+
+    private  void sendMAC(String mac) {
+        Protocol.send(Protocol.TYPE_FIND_IMAGE_BY_MAC,mac.getBytes(StandardCharsets.UTF_8),clientConfig.getDos());
     }
 
     /**
@@ -166,10 +188,23 @@ public class ManageFrame {
         Protocol.send(TYPE_CHANGE,new byte[]{(byte) Integer.parseInt(managefrequency)}, clientConfig.getDos());
     }
 
+    private void showImageList(){
+        clientConfig.setFocusImageType(null);
+        for(String i:clientConfig.getImageIDsSearchList()){
+            Protocol.send(TYPE_LOAD_IMAGE,i.getBytes(StandardCharsets.UTF_8),clientConfig.getDos());
+            try {
+                Thread.sleep(((int)clientConfig.getFrequency())*1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public void buttonUtil(){
         String frequency =  frequencyTextField.getText();
         String findUsername =  findUsernameTextField.getText();
         String findMAC =  findMACTextField.getText();
+        String findIP = findIPTextField.getText();
         if(!frequency.equals("")){
             /**
              * 更改频率
@@ -179,11 +214,19 @@ public class ManageFrame {
             /**
              * 按用户名查找
              */
+            sendUsername(findUsername);
         }else if(!findMAC.equals("")){
             /**
              * 按MAC查找
              */
+            sendMAC(findMAC);
+        }else if(!findIP.equals("")){
+            /**
+             * 按IP查找
+             */
+            sendIP(findIP);
         }
+
     }
 
     /**
@@ -215,3 +258,5 @@ public class ManageFrame {
     }
 
 }
+
+

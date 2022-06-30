@@ -49,6 +49,12 @@ public class Protocol {
 	public static final int TYPE_FIND_IMAGE_BY_IP = 82;//通过ip查找imagesid
 	public static final int TYPE_FIND_IMAGE_BY_MAC = 83;//通过mac查找imagesid
 
+	public static final int TYPE_RETURN_IMAGE_ID_BY_USERNAME=84;
+
+	public static final int TYPE_RETURN_IMAGE_ID_BY_IP=85;
+
+	public static final int TYPE_RETURN_IMAGE_ID_BY_MAC=86;
+
 	/**
 	 * 发送函数，
 	 * @param type 类型

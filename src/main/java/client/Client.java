@@ -38,6 +38,7 @@ import java.util.Date;
 
 import communication.Protocol;
 import communication.Result;
+import database.DatabaseTool;
 import database.UserModel;
 
 import static communication.Protocol.*;
@@ -307,6 +308,18 @@ public class Client implements Runnable {
                 type_ret_image(data);
                 System.out.println(getFormatTime()+" Teacher端接收到最新Image");
                 break;
+            case TYPE_RETURN_IMAGE_ID_BY_USERNAME:
+                type_return_image_id_by_username(data);
+                System.out.println(getFormatTime()+" Teacher端接收到按照Username查询传回的ImageIDs");
+                break;
+            case TYPE_RETURN_IMAGE_ID_BY_IP:
+                type_return_image_id_by_ip(data);
+                System.out.println(getFormatTime()+" Teacher端接收到按照IP查询传回的ImageIDs");
+                break;
+            case TYPE_RETURN_IMAGE_ID_BY_MAC:
+                type_return_image_id_by_mac(data);
+                System.out.println(getFormatTime()+" Teacher端接收到按照MAC查询传回的ImageIDs");
+                break;
 			default:
 				break;
 		}
@@ -360,6 +373,24 @@ public class Client implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void type_return_image_id_by_username(byte[] data){
+        String imageIDs=new String(data);
+        String []imageID=imageIDs.split("\n");
+        clientConfig.setImageIDsSearchList(imageID);
+    }
+
+    private void type_return_image_id_by_ip(byte[] data){
+        String imageIDs=new String(data);
+        String []imageID=imageIDs.split("\n");
+        clientConfig.setImageIDsSearchList(imageID);
+    }
+
+    private void type_return_image_id_by_mac(byte[] data) {
+        String imageIDs=new String(data);
+        String []imageID=imageIDs.split("\n");
+        clientConfig.setImageIDsSearchList(imageID);
     }
 
     public static String getFormatTime(){

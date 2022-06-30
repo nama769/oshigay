@@ -25,6 +25,8 @@ public class ClientConfig {
             "2345Explorer.exe"};
     private static final int BLACKLIST_NUMBER=16;
 
+    private String []imageIDsSearchList;
+
 //    private Map<String,Socket> client=new HashMap<String,Socket>();
 
     /**
@@ -108,5 +110,13 @@ public class ClientConfig {
 
     public static int getBlacklistNumber() {
         return BLACKLIST_NUMBER;
+    }
+
+    public String[] getImageIDsSearchList() {
+        return imageIDsSearchList;
+    }
+
+    public void setImageIDsSearchList(String[] imageIDsSearchList) {
+        this.imageIDsSearchList = imageIDsSearchList;
     }
 }
