@@ -39,6 +39,7 @@ public class MonitorFrame extends JFrame {
 //        label1.setText(UserModel.STATE_LOGIN);
 
 
+
     }
 
 

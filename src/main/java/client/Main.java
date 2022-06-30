@@ -8,7 +8,7 @@ public class Main {
         ClientConfig clientconfig = new ClientConfig();
         Client client = new Client(clientconfig);
 //        client.showSystemTray();// 显示托盘
-        String serverIP ="172.28.128.1";
+        String serverIP ="169.254.246.116";
 //        serverIP ="123.57.193.197";
         if(args.length==1){
             serverIP = args[0];
@@ -22,7 +22,7 @@ public class Main {
         View view = new View(clientconfig);
         view.create();
 
-//        client.showSystemTray();// 显示托盘
+//      client.showSystemTray();
 
         client.handleResult();
 //        while (client.isLive) {

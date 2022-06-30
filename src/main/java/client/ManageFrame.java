@@ -52,7 +52,7 @@ public class ManageFrame {
 
     private ClientConfig clientConfig;
 
-    public ManageFrame(final ClientConfig clientConfig) {
+    public ManageFrame(final ClientConfig clientConfig)  {
 
         width = (int)  screensize.getWidth();
         height =  (int) screensize.getHeight();

@@ -7,10 +7,7 @@ import communication.Protocol;
 import communication.Protocol;
 import database.UserModel;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.io.*;
@@ -123,6 +120,8 @@ public class LoginFrame extends JFrame {
                                                                */
                                                               JFrame f = new MonitorFrame(clientConfig);
                                                               f.setVisible(true);
+                                                              f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                                                              showSystemTray(f);
                                                               dispose();
                                                               MonitorFrame.monitorUtil(clientConfig);
                                                           }
@@ -222,6 +221,98 @@ public class LoginFrame extends JFrame {
         String RegisterData = loginUsernameLen + loginUserName + loginPasswordLen + loginPassword + MACaddr + role;
         Protocol.send(Protocol.TYPE_REGISTER, RegisterData.getBytes(), clientConfig.getDos());
     }
+    public void showSystemTray(final JFrame jFrame) {
+        //		设置托盘图标
+        final Image image = Toolkit.getDefaultToolkit().getImage("img/icon.png");
+        final TrayIcon trayIcon = new TrayIcon(image);// 创建托盘图标
+        trayIcon.setToolTip("屏幕监控系统\r\n客户端");// 设置提示文字
+//		创建托盘图标对象
+        final SystemTray systemTray = SystemTray.getSystemTray();
+//		设置托盘图标大小自适应
+        trayIcon.setImageAutoSize(true);
+        final PopupMenu popupMenu = new PopupMenu(); // 创建弹出菜单
+        MenuItem item = new MenuItem("Quit");
+
+// 		窗口监听
+        item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                clientConfig.setLive(false);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                close();
+                jFrame.dispose();
+            }
+        });
+        popupMenu.add(item);
+        trayIcon.setPopupMenu(popupMenu);// 为托盘图标加弹出菜单
+        jFrame.addWindowListener(new WindowAdapter() {
+            // 			窗口最小化事件
+            public void windowIconified(WindowEvent e) {
+                try {
+//					窗口最小化时显示托盘图标
+                    systemTray.add(trayIcon);
+                } catch (AWTException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+//				设置窗口不可见
+                jFrame.setVisible(false);
+            }
+        });
+
+//		鼠标监听
+        trayIcon.addMouseListener(new MouseAdapter() {
+            //			鼠标点击事件
+            @Override
+            public void mouseClicked(MouseEvent e) {
+//				鼠标点击次数
+                if(e.getButton() == e.BUTTON1){
+                    int clt = e.getClickCount();
+                    if (clt == 1) {
+//					鼠标点击托盘图标一次，恢复原窗口
+                        jFrame.setExtendedState(NORMAL);
+                    }
+//				托盘图标消失
+                    systemTray.remove(trayIcon);
+//				设置窗口可见
+                    jFrame.setVisible(true);
+                }
+
+            }
+        });
+//        try {
+//            systemTray.add(trayIcon);// 为系统托盘加托盘图标
+//        } catch (AWTException e) {
+//            e.printStackTrace();
+//        }
+
+    }
+
+    public void close() {
+        //向服务器发送消息
+        DataOutputStream dos =  clientConfig.getDos();
+        Socket socket=clientConfig.getSocket();
+        DataInputStream  dis = clientConfig.getDis();
+        Protocol.send(Protocol.TYPE_LOGOUT, new String("logout").getBytes(), clientConfig.getDos());
+
+        // 关闭资源
+
+        try {
+            if (dos != null)
+                clientConfig.changeDos();
+            if(dis != null){
+                clientConfig.changDis();
+            }
+            if (socket != null)
+                clientConfig.changeSocket();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private static final int DEFAULT_WIDTH = 300;
     private static final int DEFAULT_HEIGHT = 200;

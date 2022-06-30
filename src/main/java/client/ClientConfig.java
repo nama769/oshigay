@@ -2,6 +2,7 @@ package client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,10 @@ public class ClientConfig {
     private static final int BLACKLIST_NUMBER=16;
 
     private String []imageIDsSearchList;
+
+    private int secede =0;
+
+    private boolean isLive =true;
 
 //    private Map<String,Socket> client=new HashMap<String,Socket>();
 
@@ -119,4 +124,33 @@ public class ClientConfig {
     public void setImageIDsSearchList(String[] imageIDsSearchList) {
         this.imageIDsSearchList = imageIDsSearchList;
     }
+
+    public int getSecede() {
+        return secede;
+    }
+    public void setSecede(int secede) {
+        this.secede = secede;
+    }
+
+    public void setLive(boolean live) {
+        this.isLive = live;
+    }
+
+    public boolean getIsLive() {
+        return isLive;
+    }
+    public void changeDos(){
+        try {
+            dos.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void changeSocket() throws IOException {
+        socket.close();
+    }
+    public void changDis() throws IOException {
+        dis.close();
+    }
+
 }
