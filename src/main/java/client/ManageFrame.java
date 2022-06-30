@@ -92,11 +92,11 @@ public class ManageFrame {
 
 
         //设置树节点的样式
-        DefaultTreeCellRenderer cr=new DefaultTreeCellRenderer();
+        MyNodeRenderer cr=new MyNodeRenderer(clientConfig);
         cr.setBackgroundNonSelectionColor(Color.darkGray);
         cr.setTextNonSelectionColor(Color.white);
         tree.setCellRenderer(cr);
-        //tree.setCellRenderer(new MyNodeRenderer());
+//        tree.setCellRenderer(new MyNodeRenderer(clientConfig));
         JScrollPane jsp=new JScrollPane(tree);
         JScrollBar bar=jsp.getHorizontalScrollBar();
         bar.setBackground(Color.darkGray);
@@ -253,55 +253,51 @@ public class ManageFrame {
             root.add(node1);
 
         }
-        //DefaultTreeCellRenderer renderer =  tree.getCellRenderer();
+//        DefaultTreeCellRenderer renderer =  tree.getCellRenderer();
         model.reload();
     }
 
 
 
 
-//    private class MyNodeRenderer extends DefaultTreeCellRenderer {
-//        private ClientConfig  clientConfig;
-//
-//        /**
-//         * 待实现一个构造方法，包含ClientConfig中的名单
-//         * @param tree
-//         * @param value
-//         * @param selected
-//         * @param expanded
-//         * @param leaf
-//         * @param row
-//         * @param hasFocus
-//         * @return
-//         */
-//        private String[] ViolateUsernames = ClientConfig.getViolateUsernames();
-//        private String[] DownUsernames = ClientConfig.getDownUsernames();
-//        //重写getTreeCellRendererComponent的方法
-//
-//        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-//            //super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-//            //setForeground(Color.GREEN);// 设置文字的颜色
-//            DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-//            super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-//            //获取到当前即将绘制的结点的名称和图标
+    private class MyNodeRenderer extends DefaultTreeCellRenderer {
+        private ClientConfig  clientConfig;
+
+
+
+        /**
+         * 待实现一个构造方法，包含ClientConfig中的名单
+         */
+        public MyNodeRenderer(ClientConfig clientConfig){
+            this.clientConfig = clientConfig;
+        }
+
+        //重写getTreeCellRendererComponent的方法
+
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+            //super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+            //setForeground(Color.GREEN);// 设置文字的颜色
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+            super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+            //获取到当前即将绘制的结点的名称和图标
 //            NodeData nodeData = (NodeData) node.getUserObject();
-//            //
-//            for (String username:
-//                    ViolateUsernames) {
-//                if(nodeData.toString().equals(username)){
-//                    setForeground(Color.RED);
-//                };
-//            }
-//            for (String username:
-//                    DownUsernames) {
-//                if(nodeData.toString().equals(username)){
-//                    setForeground(Color.GRAY);
-//                };
-//            }
-//            //this.setText(nodeData.name);
-//            return this;
-//        }
-//    }
+            //
+            for (String username:
+                    clientConfig.getViolateUsernames()) {
+                if(node.getUserObject().toString().trim().equals(username)){
+                    setForeground(Color.RED);
+                };
+            }
+            for (String username:
+                    clientConfig.getDownUsernames()) {
+                if(node.getUserObject().toString().trim().equals(username)){
+                    setForeground(Color.GRAY);
+                };
+            }
+            //this.setText(nodeData.name);
+            return this;
+        }
+    }
 
 
     public static List<String> addValue(String key){

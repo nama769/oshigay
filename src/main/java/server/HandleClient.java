@@ -75,6 +75,7 @@ public class HandleClient implements Runnable {
 				 */
 				clientConfig.addDownClient(userModel);
 				System.out.println(userModel.getUsername() + " 已下线！");
+				Protocol.send(TYPE_STUDENT_DOWN,userModel.getUsername().getBytes(StandardCharsets.UTF_8),clientConfig.getDosTeacher());
 				isLive = false;
 			}
 

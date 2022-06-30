@@ -39,16 +39,22 @@ public class ClientConfig {
     }
 
     public String[] getViolateUsernames(){
-        return (String[])violateUsernameList.toArray();
+        return (String[])violateUsernameList.toArray(new String[violateUsernameList.size()]);
     }
 
     public String[] getDownUsernames(){
-        return (String[])downUsernameList.toArray();
+        return (String[])downUsernameList.toArray(new String[downUsernameList.size()]);
     }
 
     public void addViolateUsername(String violateUsername){
         if (!violateUsernameList.contains(violateUsername)){
             violateUsernameList.add(violateUsername);
+        }
+    }
+
+    public void addDownUsername(String downUsername){
+        if (!downUsernameList.contains(downUsername)){
+            downUsernameList.add(downUsername);
         }
     }
 
