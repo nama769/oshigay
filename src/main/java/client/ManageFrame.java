@@ -1,7 +1,6 @@
 package client;
 
 
-import com.sun.corba.se.impl.orbutil.graph.NodeData;
 import communication.Protocol;
 
 import java.awt.*;
@@ -243,6 +242,7 @@ public class ManageFrame {
 
     /**
      * 添加树节点
+     *
      * @param l
      */
     public static void setTreeNode(List<String> l){

@@ -242,6 +242,7 @@ public class LoginFrame extends JFrame {
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
+                systemTray.remove(trayIcon);
                 close();
                 jFrame.dispose();
             }
