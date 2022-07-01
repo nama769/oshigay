@@ -27,7 +27,11 @@ public class ShowImages implements Runnable{
             if(clientConfig.getFocusImageType()!=null){
                 break;
             }
+            while (clientConfig.isImageLoading()){
+
+            }
             Protocol.send(TYPE_LOAD_IMAGE,i.getBytes(StandardCharsets.UTF_8),clientConfig.getDos());
+            clientConfig.setImageLoading(true);
             System.out.println(getFormatTime()+"Teacher端正在请求展示imagesID="+i+" 的图片");
             try {
                 Thread.sleep(((int)clientConfig.getFrequency())*1000);

@@ -4,7 +4,7 @@ package client;
  * 客户端主函数入口，与服务端创建连接，调用View创建JFrame。
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void clientMain(String[] args) {
         ClientConfig clientconfig = new ClientConfig();
         Client client = new Client(clientconfig);
 //        client.showSystemTray();// 显示托盘
@@ -13,7 +13,9 @@ public class Main {
         if(args.length==1){
             serverIP = args[0];
         }
-        client.conn(serverIP,33000);
+        clientconfig.setServerIp(serverIP);
+        clientconfig.setPort(33000);
+        client.conn(serverIP,clientconfig.getPort());
 
         //        client.load();// 登录
         /**

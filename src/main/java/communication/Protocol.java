@@ -46,6 +46,8 @@ public class Protocol {
 
 	public static final int TYPE_CHANGE_BLACK_LIST = 14;//老师端向学生端更新黑名单
 	public static final int TYPE_SEND_BLACK_LIST_TO_CLIENT = 15;//老师端向学生端更新黑名单
+
+    public static final int TYPE_IMAGE_NOT_FOUND = 16;//老师端向学生端更新黑名单
 	/**
 	 * 老张 1-20
 	 * 老郭 21-40
@@ -163,6 +165,9 @@ public class Protocol {
     public static Result getResult(DataInputStream dis) throws IOException {
         byte type = dis.readByte();
         int totalLen = dis.readInt();
+        if(totalLen - 4 - 1<0) {
+            System.out.println(totalLen);
+        }
         byte[] bytes = new byte[totalLen - 4 - 1];
         dis.readFully(bytes);
         byte[] deBytes = RC4Util.RC4Base(bytes,RC4KEY);

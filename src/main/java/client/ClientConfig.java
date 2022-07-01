@@ -22,6 +22,74 @@ public class ClientConfig {
 
     private String state;//状态
 
+    private String serverIp;
+    private int port;
+
+    public boolean isImageLoading() {
+        return imageLoading;
+    }
+
+    public void setImageLoading(boolean imageLoading) {
+        this.imageLoading = imageLoading;
+    }
+
+    private boolean imageLoading = false;
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    private Socket socketSendImage;
+    private DataOutputStream imageDos;
+    private DataInputStream imagesDis;
+
+
+    public Socket getSocketSendImage() {
+        return socketSendImage;
+    }
+
+    public void setSocketSendImage(Socket socketSendImage) {
+        this.socketSendImage = socketSendImage;
+        try {
+            this.imageDos = new DataOutputStream(socketSendImage.getOutputStream());
+            this.imagesDis = new DataInputStream(socketSendImage.getInputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public DataOutputStream getImageDos() {
+        return imageDos;
+    }
+
+    public void setImageDos(DataOutputStream imageDos) {
+        this.imageDos = imageDos;
+    }
+
+    public DataInputStream getImagesDis() {
+        return imagesDis;
+    }
+
+    public void setImagesDis(DataInputStream imagesDis) {
+        this.imagesDis = imagesDis;
+    }
+
+    public String getServerIp() {
+        return serverIp;
+    }
+
+    public void setServerIp(String serverIp) {
+        this.serverIp = serverIp;
+    }
+
+    public boolean isLive() {
+        return isLive;
+    }
+
     private List<String> violateUsernameList = new ArrayList<>();
 
     private List<String> downUsernameList = new ArrayList<>();
@@ -72,11 +140,7 @@ public class ClientConfig {
 
     private boolean ifBlackDetect=false;//学生端是否违规
 
-    private String[] BlackList={"notepad.exe", "winword.exe", "wps.exe", "wordpad.exe", "iexplore.exe", "chrome.exe", "qqbrowser.exe",
-
-            "360chrome.exe", "360se.exe", "sogouexplorer.exe", "firefox.exe", "opera.exe", "maxthon.exe", "netscape.exe", "baidubrowser.exe",
-
-            "2345Explorer.exe"};
+    private String[] BlackList={"test"};
 
 
 

@@ -5,6 +5,9 @@ import database.UserModel;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +43,50 @@ public class ClientConfig {
      *违规学生列表
      */
     private List violateClient = new ArrayList<>();
+
+    private ServerSocket imageSocket;
+
+    private Socket socketSendImage;
+    private DataOutputStream imageDos;
+    private DataInputStream imagesDis;
+
+    public Socket getSocketSendImage() {
+        return socketSendImage;
+    }
+
+    public void setSocketSendImage(Socket socketSendImage) {
+        this.socketSendImage = socketSendImage;
+        try {
+            this.imageDos = new DataOutputStream(socketSendImage.getOutputStream());
+            this.imagesDis = new DataInputStream(socketSendImage.getInputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public DataOutputStream getImageDos() {
+        return imageDos;
+    }
+
+    public void setImageDos(DataOutputStream imageDos) {
+        this.imageDos = imageDos;
+    }
+
+    public DataInputStream getImagesDis() {
+        return imagesDis;
+    }
+
+    public void setImagesDis(DataInputStream imagesDis) {
+        this.imagesDis = imagesDis;
+    }
+
+    public ServerSocket getImageSocket() {
+        return imageSocket;
+    }
+
+    public void setImageSocket(ServerSocket imageSocket) {
+        this.imageSocket = imageSocket;
+    }
 
     public String getBlackListString() {
         return blackListString;

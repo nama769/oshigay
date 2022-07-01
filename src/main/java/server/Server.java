@@ -20,7 +20,7 @@ public class Server {
 	public static String curKey = null;
 	public static boolean serverLive = true;
 
-	public static void main(String[] args) {
+	public static void serverMain(String[] args) {
 		try {
 			System.out.println(InetAddress.getLocalHost());
 		} catch (UnknownHostException e1) {
@@ -36,6 +36,8 @@ public class Server {
 		DatabaseTool databaseTool = new DatabaseTool();
 		try {
 			ServerSocket serverSocket = new ServerSocket(33000);
+			ServerSocket imageSocket = new ServerSocket(33001);
+			clientConfig.setImageSocket(imageSocket);
 //			view.create();
 			while (serverLive) {
 				Socket socket = serverSocket.accept();

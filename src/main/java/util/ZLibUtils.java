@@ -7,10 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
+import java.util.zip.*;
 
 //ZLib压缩工具
 public class ZLibUtils {
@@ -62,7 +59,7 @@ public class ZLibUtils {
     }
 
     //解压缩 字节数组
-    public static byte[] decompress(byte[] data) {
+    public static byte[] decompress(byte[] data) throws DataFormatException {
         byte[] output = new byte[0];
 
         Inflater decompresser = new Inflater();

@@ -239,6 +239,14 @@ public class HandleClient implements Runnable {
 			clientConfig.addClient(userModel);
 			if (userModel.getRole() == 1) {
 				clientConfig.setDosTeacher(dos);
+				try {
+					System.out.println(getFormatTime()+"server端正在和老师端建立传图连接");
+					Socket socketSendImage = clientConfig.getImageSocket().accept();
+					clientConfig.setSocketSendImage(socketSendImage);
+					System.out.println(getFormatTime()+"server端和老师端传图连接建立完成");
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
 			} else {
 				if (clientConfig.getDosTeacher() != null) {
 					Protocol.send(TYPE_STUDENT_UP, userModel.getUsername().getBytes(StandardCharsets.UTF_8), clientConfig.getDosTeacher());
@@ -344,8 +352,14 @@ public class HandleClient implements Runnable {
 
 	private String type_get_image(byte[] data) {
 		String username = new String(data);
-		Protocol.send(TYPE_RET_SELECT_IMAGEID, clientConfig.getUserImageMap().get(username).getBytes(StandardCharsets.UTF_8), dos);
-		return clientConfig.getUserImageMap().get(username);
+		String imageId = clientConfig.getUserImageMap().get(username);
+		if (imageId!=null) {
+			Protocol.send(TYPE_RET_SELECT_IMAGEID, imageId.getBytes(StandardCharsets.UTF_8), dos);
+			return clientConfig.getUserImageMap().get(username);
+		}else {
+			return "null";
+		}
+
 	}
 
 	private void type_load_image(byte[] data) {
@@ -356,7 +370,19 @@ public class HandleClient implements Runnable {
 //			FileInputStream fis = new FileInputStream(image);
 //			BufferedImage bfImage = (BufferedImage) ImageIO.read(image);
 //			ImageIO.write(bfImage, "png", bao);
-			Protocol.send(TYPE_RET_IMAGE, FileUtil.toByteArray(clientConfig.getImageSavePath() + imageid + ".jpg.zip"), dos);
+		try {
+			byte[] imagesBytes = FileUtil.toByteArray(clientConfig.getImageSavePath() + imageid + ".jpg.zip");
+			Protocol.send(TYPE_RET_IMAGE, new byte[]{0x11}, clientConfig.getDosTeacher());
+			Protocol.send(TYPE_RET_IMAGE,imagesBytes , clientConfig.getImageDos());
+		} catch (FileNotFoundException e) {
+			/**
+			 * 查询图片不存在
+			 */
+			System.out.println(getFormatTime()+"server端返回了结果为不存在的查询请求");
+			Protocol.send(TYPE_RET_IMAGE,new byte[]{0x11},clientConfig.getDosTeacher());
+			Protocol.send(TYPE_IMAGE_NOT_FOUND,new byte[]{0x11} , clientConfig.getImageDos());
+		}
+
 
 //		} catch (IOException e) {
 //			System.out.println(getFormatTime()+"加载图像失败："+imageid);

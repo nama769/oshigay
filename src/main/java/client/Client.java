@@ -224,8 +224,9 @@ public class Client implements Runnable {
              * 老师端
              */
             while (isLive) {
-                if (clientConfig.getFocusImageType() != null) {
+                if (clientConfig.getFocusImageType() != null&&!clientConfig.isImageLoading()) {
                     Protocol.send(TYPE_GET_IMAGE, clientConfig.getFocusImageType().getBytes(StandardCharsets.UTF_8), clientConfig.getDos());
+                    clientConfig.setImageLoading(true);
                 }
                 try {
                     System.out.println(getFormatTime() + " Teacher端正在选中：" + clientConfig.getFocusImageType());
@@ -274,6 +275,7 @@ public class Client implements Runnable {
 
     public void handleResult() {
         while (isLive) {
+            System.out.println("client runing");
             Result result = null;
             try {
                 if (clientConfig.getDis() != null) {
@@ -399,17 +401,18 @@ public class Client implements Runnable {
     }
 
     private void type_ret_image(byte[] data) {
-        ByteArrayInputStream bai = new ByteArrayInputStream(ZLibUtils.decompress(data));
-        System.out.println(getFormatTime()+"正在解压图像");
-        BufferedImage buff = null;
-        try {
-            buff = ImageIO.read(bai);
-            ManageFrame.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
-            ManageFrame.centerPanel.repaint();
-            bai.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        new Thread(new ImageSocket(clientConfig)).start();
+//        try {
+//            ByteArrayInputStream bai = new ByteArrayInputStream(ZLibUtils.decompress(data));
+//            System.out.println(getFormatTime()+"正在解压图像");
+//            BufferedImage buff = null;
+//            buff = ImageIO.read(bai);
+//            ManageFrame.centerPanel.setBufferedImage(buff);//为屏幕监控视图设置BufferedImage
+//            ManageFrame.centerPanel.repaint();
+//            bai.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void type_return_image_id_by_username(byte[] data) {

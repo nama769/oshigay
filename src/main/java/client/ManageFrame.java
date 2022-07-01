@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -193,6 +194,14 @@ public class ManageFrame {
      * 监考端逻辑
      */
     public static void manageUtil(ClientConfig clientConfig){
+        try {
+            System.out.println(getFormatTime()+"Teacher端正在和Server端建立传图连接");
+            Socket socketSendImages = new Socket(clientConfig.getServerIp(),clientConfig.getPort()+1);
+            clientConfig.setSocketSendImage(socketSendImages);
+            System.out.println(getFormatTime()+"Teacher端正在和Server端传图连接建立完成");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         new Thread(new Client(clientConfig)).start();
     }
 

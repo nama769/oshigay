@@ -23,11 +23,12 @@ public class FileUtil {
      * @return
      *
      */
-    public static byte[] toByteArray(String filename) {
+    public static byte[] toByteArray(String filename) throws FileNotFoundException {
 
         File f = new File(filename);
         if (!f.exists()) {
             System.out.println(getFormatTime()+" 文件 "+filename+" 不存在");
+            throw new FileNotFoundException();
         }
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream((int) f.length());
