@@ -70,7 +70,7 @@ public class ManageFrame {
         leftPanel.setBackground(Color.darkGray);
         container.add(leftPanel,BorderLayout.WEST);
         //树
-        root=new DefaultMutableTreeNode("所有连接的被控端");
+        root=new DefaultMutableTreeNode("所有连接的学生端");
         model=new DefaultTreeModel(root);
         JTree tree=new JTree(model);
         tree.setBackground(Color.darkGray);
@@ -83,8 +83,10 @@ public class ManageFrame {
                         .getLastSelectedPathComponent();
                 if(selectionNode!=null){
                     String nodeName=selectionNode.toString();
-                    curKey=nodeName;
-                    clientConfig.setFocusImageType(curKey);
+                    if(!nodeName.equals("所有连接的学生端")){
+                        curKey=nodeName;
+                        clientConfig.setFocusImageType(curKey);
+                    }
                 }
             }
         });

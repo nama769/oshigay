@@ -41,6 +41,7 @@ import communication.Result;
 import database.DatabaseTool;
 import database.UserModel;
 import server.HandleClient;
+import util.ZLibUtils;
 
 import static communication.Protocol.*;
 
@@ -253,7 +254,10 @@ public class Client implements Runnable {
             try {
                 ByteArrayOutputStream bao = new ByteArrayOutputStream();
                 ImageIO.write(bfImage, "png", bao);
-                Protocol.send(Protocol.TYPE_GRAPH, bao.toByteArray(), dos);
+                byte[] zipBao = ZLibUtils.compress(bao.toByteArray());
+                Protocol.send(Protocol.TYPE_GRAPH,zipBao, dos);
+                long baoLength = bao.toByteArray().length;
+                System.out.println(getFormatTime()+"正在上传压缩截图 压缩前长度："+baoLength+" 压缩后长度："+zipBao.length+" 压缩比："+(1-((double)zipBao.length/baoLength))*100+"%");
                 bao.close();
                 /**
                  * 查询本地程序列表，判断是否违规
@@ -395,7 +399,8 @@ public class Client implements Runnable {
     }
 
     private void type_ret_image(byte[] data) {
-        ByteArrayInputStream bai = new ByteArrayInputStream(data);
+        ByteArrayInputStream bai = new ByteArrayInputStream(ZLibUtils.decompress(data));
+        System.out.println(getFormatTime()+"正在解压图像");
         BufferedImage buff = null;
         try {
             buff = ImageIO.read(bai);

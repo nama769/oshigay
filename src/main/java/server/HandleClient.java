@@ -21,6 +21,7 @@ import communication.Result;
 import database.DatabaseTool;
 import database.UserModel;
 import database.ImageModel;
+import util.FileUtil;
 
 import java.util.UUID;
 import java.sql.*;
@@ -197,14 +198,18 @@ public class HandleClient implements Runnable {
 
 
 	private String type_graph(byte[] data) throws IOException {
-		ByteArrayInputStream ba = new ByteArrayInputStream(data);
-		BufferedImage buf = ImageIO.read(ba);
+//		ByteArrayInputStream ba = new ByteArrayInputStream(data);
+//		BufferedImage buf = ImageIO.read(ba);
 		String imageUuid = UUID.randomUUID().toString().replace("-", "");
 		long imageTime = System.currentTimeMillis();
 		ImageModel imagemodel = new ImageModel(imageUuid, imageTime, userModel.getID());
 		databaseTool.addImage(imagemodel);
-		File outputFile = new File(clientConfig.getImageSavePath(), imageUuid + ".jpg");
-		ImageIO.write(buf, "jpg", outputFile);
+		File outputFile = new File(clientConfig.getImageSavePath(), imageUuid + ".jpg.zip");
+		FileOutputStream fos = new FileOutputStream(outputFile);
+		fos.write(data);
+		fos.flush();
+		fos.close();
+//		ImageIO.write(buf, "jpg", outputFile);
 		byte fre[] = {0x16};
 		fre[0] = this.clientConfig.getFrequency();
 		Protocol.send(TYPE_GRAPH, fre, dos);
@@ -345,16 +350,17 @@ public class HandleClient implements Runnable {
 
 	private void type_load_image(byte[] data) {
 		String imageid = new String(data);
-		try {
-			ByteArrayOutputStream bao = new ByteArrayOutputStream();
-			File image = new File(clientConfig.getImageSavePath() + imageid + ".jpg");
-			BufferedImage bfImage = (BufferedImage) ImageIO.read(image);
-			ImageIO.write(bfImage, "png", bao);
-			Protocol.send(TYPE_RET_IMAGE, bao.toByteArray(), dos);
-			bao.close();
-		} catch (IOException e) {
-			System.out.println(getFormatTime()+"加载图像失败："+imageid);
-		}
+//		try {
+//			ByteArrayOutputStream bao = new ByteArrayOutputStream();
+//			File image = new File();
+//			FileInputStream fis = new FileInputStream(image);
+//			BufferedImage bfImage = (BufferedImage) ImageIO.read(image);
+//			ImageIO.write(bfImage, "png", bao);
+			Protocol.send(TYPE_RET_IMAGE, FileUtil.toByteArray(clientConfig.getImageSavePath() + imageid + ".jpg.zip"), dos);
+
+//		} catch (IOException e) {
+//			System.out.println(getFormatTime()+"加载图像失败："+imageid);
+//		}
 
 	}
 
