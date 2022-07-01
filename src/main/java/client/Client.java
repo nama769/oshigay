@@ -433,6 +433,7 @@ public class Client implements Runnable {
     private void type_student_violate(byte[] data) {
         String violateUsername = new String(data);
         clientConfig.addViolateUsername(violateUsername);
+        ManageFrame.model.reload();
     }
 
     private void type_send_black_list_to_client(byte[] data) {
@@ -442,6 +443,7 @@ public class Client implements Runnable {
 
     private void type_student_down(byte[] data) {
         clientConfig.addDownUsername(new String(data));
+        ManageFrame.model.reload();
     }
 
     public static String getFormatTime() {
